@@ -6,7 +6,6 @@ class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
         self.deck = [Card(rank, suit) for suit in range(13,18) for rank in range(1,14)]
-        self.deck_layered_updates = pygame.sprite.LayeredUpdates(self.deck)
 
 class Card(pygame.sprite.Sprite):
 
@@ -39,11 +38,10 @@ class Card(pygame.sprite.Sprite):
         self.suit = suit
         self._layer = 0
 
-        self.update_image()
-        self.image_width, self.image_height = self.image.get_size()
+        self.update_image(4)
         self.rect = pygame.Rect(self.pos.x, self.pos.y, self.image_width, self.image_height)
 
-    def update_image(self):
+    def update_image(self, scale):
         if self.suit == Card.HEART:
             suit_str = 'hearts'
         elif self.suit == Card.DIAMOND:
@@ -66,7 +64,9 @@ class Card(pygame.sprite.Sprite):
         else:
             rank_str = '0{}'.format(self.rank)
 
-        self.image = self.image = pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
+        self.image = pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
+        self.image_width, self.image_height = self.image.get_size()
+        self.image = pygame.transform.scale(self.image, (scale * self.image_width, scale * self.image_height))
     
     def update_rect(self):
         self.rect = pygame.Rect(self.pos.x, self.pos.y, self.image_width, self.image_height)
