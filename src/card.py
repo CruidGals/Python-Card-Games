@@ -5,9 +5,16 @@ import os
 class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
-        self.deck = [Card(rank, suit) for suit in range(13,18) for rank in range(1,14)]
+        self.deck = [PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)]
 
 class Card(pygame.sprite.Sprite):
+    def __init__(self, pos=Vector2(0,0), image=None) -> None:
+        self.pos = pos
+        self.image = image
+
+        self._layer = 0
+
+class PlayingCard(Card):
 
     #----constants----#
 
@@ -33,42 +40,34 @@ class Card(pygame.sprite.Sprite):
     SPADE = 17
 
     def __init__(self, rank, suit, pos=Vector2(0,0)) -> None:
-        self.pos = pos
+        super(PlayingCard, self).__init__(pos)
         self.rank = rank
         self.suit = suit
-        self._layer = 0
+        self.image = self.get_image(4)
 
-        self.update_image(4)
-        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.image_width, self.image_height)
-
-    def update_image(self, scale):
-        if self.suit == Card.HEART:
+    def get_image(self, scale):
+        if self.suit == PlayingCard.HEART:
             suit_str = 'hearts'
-        elif self.suit == Card.DIAMOND:
+        elif self.suit == PlayingCard.DIAMOND:
             suit_str = 'diamonds'
-        elif self.suit == Card.CLUB:
+        elif self.suit == PlayingCard.CLUB:
             suit_str = 'clubs'
         else:
             suit_str = 'spades' #Makes sure suit_str gets a value no matter what
 
-        if self.rank == Card.ACE:
+        if self.rank == PlayingCard.ACE:
             rank_str = 'A'
-        elif self.rank == Card.TEN:
+        elif self.rank == PlayingCard.TEN:
             rank_str = '10'
-        elif self.rank == Card.JACK:
+        elif self.rank == PlayingCard.JACK:
             rank_str = 'J'
-        elif self.rank == Card.QUEEN:
+        elif self.rank == PlayingCard.QUEEN:
             rank_str = 'Q'
-        elif self.rank == Card.KING:
+        elif self.rank == PlayingCard.KING:
             rank_str = 'K'
         else:
             rank_str = '0{}'.format(self.rank)
 
-        self.image = pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
-        self.image_width, self.image_height = self.image.get_size()
-        self.image = pygame.transform.scale(self.image, (scale * self.image_width, scale * self.image_height))
-    
-    def update_rect(self):
-        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.image_width, self.image_height)
-
-    
+        image = pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
+        image_width, image_height = image.get_size()
+        return pygame.transform.scale(image, (scale * image_width, scale * image_height))
