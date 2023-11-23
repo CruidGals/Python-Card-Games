@@ -14,6 +14,10 @@ class Card(pygame.sprite.Sprite):
 
         self._layer = 0
 
+    def scale_image(self, scale):
+        image_width, image_height = self.image.get_size()
+        self.image = pygame.transform.scale(self.image, (scale * image_width, scale * image_height))
+
 class PlayingCard(Card):
 
     #----constants----#
@@ -43,9 +47,11 @@ class PlayingCard(Card):
         super(PlayingCard, self).__init__(pos)
         self.rank = rank
         self.suit = suit
-        self.image = self.get_image(4)
+        self.image = self.get_image()
 
-    def get_image(self, scale):
+        self.scale_image(4)
+
+    def get_image(self):
         if self.suit == PlayingCard.HEART:
             suit_str = 'hearts'
         elif self.suit == PlayingCard.DIAMOND:
@@ -68,6 +74,4 @@ class PlayingCard(Card):
         else:
             rank_str = '0{}'.format(self.rank)
 
-        image = pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
-        image_width, image_height = image.get_size()
-        return pygame.transform.scale(image, (scale * image_width, scale * image_height))
+        return pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
