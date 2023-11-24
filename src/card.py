@@ -8,15 +8,26 @@ class Deck:
         self.deck = [PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)]
 
 class Card(pygame.sprite.Sprite):
-    def __init__(self, pos=Vector2(0,0), image=None) -> None:
+    def __init__(self, pos=Vector2(0,0), front_image=None, back_image=None) -> None:
         self.pos = pos
-        self.image = image
+        self.front_image = front_image
+        self.back_image = back_image
+
+        self.front_shown = True
 
         self._layer = 0
+        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
 
-    def scale_image(self, scale):
-        image_width, image_height = self.image.get_size()
-        self.image = pygame.transform.scale(self.image, (scale * image_width, scale * image_height))
+    def scale_card(self, scale):
+        image_width, image_height = self.front_image.get_size()
+        self.front_image = pygame.transform.scale(self.front_image, (scale * image_width, scale * image_height))
+        self.back_image = pygame.transform.scale(self.back_image, (scale * image_width, scale * image_height))
+
+    def update_rect(self):
+        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
+
+    def draw_card(self, screen, pos):
+        screen.blit(self.front_image, pos) if self.front_shown else screen.blit(self.back_image, pos)
 
 class PlayingCard(Card):
 
@@ -47,9 +58,10 @@ class PlayingCard(Card):
         super(PlayingCard, self).__init__(pos)
         self.rank = rank
         self.suit = suit
-        self.image = self.get_image()
+        self.front_image = self.get_image()
+        self.back_image = pygame.image.load(os.path.join('resources', 'cards', 'card_back.png')).convert_alpha()
 
-        self.scale_image(4)
+        self.scale_card(4)
 
     def get_image(self):
         if self.suit == PlayingCard.HEART:
