@@ -1,11 +1,15 @@
 import pygame
 from pygame import Vector2
+import numpy as np
 import os
 
 class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
-        self.deck = [PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)]
+        self.deck = np.array([PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)])
+
+    def shuffle_deck(self):
+        np.random.shuffle(self.deck)
 
 class Card(pygame.sprite.Sprite):
     def __init__(self, pos=Vector2(0,0), front_image=None, back_image=None) -> None:
