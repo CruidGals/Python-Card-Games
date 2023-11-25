@@ -1,10 +1,13 @@
 import pygame
+import numpy as np
 import os, math
 from card import Deck, Card
 
 class Game:
     def __init__(self) -> None:
         self.deck = Deck()
+        self.random_card = np.random.choice(self.deck.deck)
+        self.random_pos = (np.random.random_integers(0,800), np.random.random_integers(0,800))
         self.background_image = pygame.transform.scale(pygame.image.load(os.path.join('resources', 'background', 'grass.jpg')).convert_alpha(), (256, 256)) #Scale to add 8-bit feeling
 
     def draw_background(self, screen):
@@ -22,8 +25,7 @@ class Game:
 
     def draw_elements(self, screen):
         self.draw_background(screen)
-
-
+        self.random_card.draw_card(screen, self.random_pos)
 
 def main():
     pygame.init()
