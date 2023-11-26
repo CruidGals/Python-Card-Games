@@ -60,8 +60,12 @@ class SolitareGameLogic:
     def swap_talon_to_tableau(self, tableau_pile: list):
         self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
 
-    def swap_talon_to_foundation(self, tableau_pile: list, foundation_pile: list):
+    # Foundation piles must "claim" a suit, and will have to be placed in increasing order
+    def swap_tableau_to_foundation(self, tableau_pile: list, foundation_pile: list):
         pass
 
-    def swap_foundation_to_talon(self, foundation_pile: list, tableau_pile: list):
+    def swap_talon_to_foundation(self, foundation_pile: list):
+        pass
+
+    def swap_foundation_to_tableau(self, foundation_pile: list, tableau_pile: list):
         self.swap_tableau_to_tableau(foundation_pile, tableau_pile, -1)
