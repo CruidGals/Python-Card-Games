@@ -31,6 +31,11 @@ class SolitareGameLogic:
 
                 self.tableau[i-1].append(card)
 
+    def is_game_won(self):
+        return len(self.foundation_piles[0]) + len(self.foundation_piles[1]) + len(self.foundation_piles[2]) + len(self.foundation_piles[3]) == 52
+
+    #---------------- Swapping Functions ----------------#
+
     # In solitare, to shift from tableau piles you must satisfy these conditions:
     #   1.) The cards you are shifting is of opposite color to the card you are putting it on
     #   2.) The cards you are shifting must be a number one lower than the card you are putting it on
