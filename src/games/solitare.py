@@ -62,7 +62,14 @@ class SolitareGameLogic:
 
     # Foundation piles must "claim" a suit, and will have to be placed in increasing order
     def swap_tableau_to_foundation(self, tableau_pile: list, foundation_pile: list):
-        pass
+        if len(foundation_pile) != 0:
+            if tableau_pile[-1].suit != foundation_pile[-1].suit: return
+            if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return
+        else:
+            if tableau_pile[-1].rank != PlayingCard.ACE: return
+
+        foundation_pile.append(tableau_pile.pop())
+        if len(tableau_pile) != 0: tableau_pile[-1].front_shown = True
 
     def swap_talon_to_foundation(self, foundation_pile: list):
         self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
