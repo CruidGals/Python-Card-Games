@@ -91,3 +91,17 @@ class PlayingCard(Card):
             rank_str = '0{}'.format(self.rank)
 
         return pygame.image.load(os.path.join('resources', 'cards', 'card_{}_{}.png'.format(suit_str, rank_str))).convert_alpha()
+
+    #Determines if cards are both red or black or of different color
+    @staticmethod
+    def is_same_color(card1, card2):
+        if(card1.suit == PlayingCard.HEART or card2.suit == PlayingCard.DIAMOND):
+            if(card2.suit == PlayingCard.HEART or card2.suit == PlayingCard.DIAMOND):
+                return True
+            else:
+                return False
+        else:    
+            if(card2.suit == PlayingCard.CLUB or card2.suit == PlayingCard.SPADE):
+                return True
+            else:
+                return False
