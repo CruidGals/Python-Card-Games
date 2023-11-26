@@ -21,7 +21,7 @@ class SolitareGameLogic:
         self.stockpile = [[], []] #Includes talon pile (waste pile)
 
         self.deck.shuffle_deck()
-        self.stockpile[0] = self.deck.tolist() #Do this so i can pop from the list
+        self.stockpile[0] = self.deck.deck.tolist() #Do this so i can pop from the list
 
         for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
             for j in range(i): #Range of i because of solitare shtife
