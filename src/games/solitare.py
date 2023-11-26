@@ -34,11 +34,11 @@ class SolitareGameLogic:
     # In solitare, to shift from tableau piles you must satisfy these conditions:
     #   1.) The cards you are shifting is of opposite color to the card you are putting it on
     #   2.) The cards you are shifting must be a number one lower than the card you are putting it on
-    # Index exists if moving a group of cards (idx should be len(orig_pile) if just moving one card)
+    # Index exists if moving a group of cards (idx should be -1) if just moving one card)
     def swap_tableau_to_tableau(self, orig_pile: list, new_pile: list, idx):
 
         #Start out with a bunch of guard clauses
-        if(len(new_pile) != 0): #making sure the pile isn't empty before we do this
+        if(len(new_pile) != 0):
             if(orig_pile[idx].is_same_color(new_pile[-1])): return
             if(orig_pile[idx].rank != new_pile[-1].rank - 1): return
         else: #When a tableau pile is empty, you can only put a king on it
@@ -58,7 +58,7 @@ class SolitareGameLogic:
             self.talon_pile.append(self.stockpile.pop())
 
     def swap_talon_to_tableau(self, tableau_pile: list):
-        pass
+        self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
 
     def swap_talon_to_foundation(self, tableau_pile: list, foundation_pile: list):
         pass
