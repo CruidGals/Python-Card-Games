@@ -46,6 +46,8 @@ class SolitareGameLogic:
         new_pile.append(orig_pile.pop())
         orig_pile[-1].front_shown = True
 
+        #TODO make sure it works when you are moving a pile of cards onto another pile (ie a 3 and 2 stacked onto a 4)
+
     # Cards from stockpile fall into talon pile until there is no more cards
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
@@ -55,4 +57,11 @@ class SolitareGameLogic:
         else:
             self.talon_pile.append(self.stockpile.pop())
 
-    
+    def swap_talon_to_tableau(self, tableau_pile: list):
+        pass
+
+    def swap_talon_to_foundation(self, tableau_pile: list, foundation_pile: list):
+        pass
+
+    def swap_foundation_to_talon(self, foundation_pile: list, tableau_pile: list):
+        pass
