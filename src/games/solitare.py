@@ -38,20 +38,20 @@ class SolitareGameLogic:
     def swap_tableau_to_tableau(self, orig_pile: list, new_pile: list, idx):
 
         #Start out with a bunch of guard clauses
-        if(len(new_pile) != 0):
-            if(orig_pile[idx].is_same_color(new_pile[-1])): return
-            if(orig_pile[idx].rank != new_pile[-1].rank - 1): return
+        if len(new_pile) != 0:
+            if orig_pile[idx].is_same_color(new_pile[-1]): return
+            if orig_pile[idx].rank != new_pile[-1].rank - 1: return
         else: #When a tableau pile is empty, you can only put a king on it
-            if(orig_pile[idx].rank != PlayingCard.KING): return
+            if orig_pile[idx].rank != PlayingCard.KING: return
 
         new_pile.append(orig_pile[idx:])
         del orig_pile[idx:]
-        orig_pile[-1].front_shown = True
+        if len(orig_pile) != 0: orig_pile[-1].front_shown = True
 
     # Cards from stockpile fall into talon pile until there is no more cards
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
-        if(len(self.stockpile) == 0):
+        if len(self.stockpile) == 0:
             self.stockpile = self.talon_pile[:]
             self.talon_pile.clear()
         else:
