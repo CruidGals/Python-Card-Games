@@ -21,6 +21,9 @@ class SolitareGameLogic:
         self.stockpile = []
         self.talon_pile = []
 
+        self.points = 0
+        self.move_count = 0
+
         self.deck.shuffle_deck()
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
@@ -51,7 +54,11 @@ class SolitareGameLogic:
 
         new_pile.append(orig_pile[idx:])
         del orig_pile[idx:]
-        if len(orig_pile) != 0: orig_pile[-1].front_shown = True
+        if len(orig_pile) != 0 and not orig_pile[-1].front_shown:
+            orig_pile[-1].front_shown = True
+            self.points += 5
+
+        self.move_count += 1
 
     # Cards from stockpile fall into talon pile until there is no more cards
     # in stockpile, where which all the talon pile cards go back to stockpile.
@@ -61,9 +68,12 @@ class SolitareGameLogic:
             self.talon_pile.clear()
         else:
             self.talon_pile.append(self.stockpile.pop())
+        
+        self.move_count += 1
 
     def swap_talon_to_tableau(self, tableau_pile: list):
         self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
+        self.points += 5
 
     # Foundation piles must "claim" a suit, and will have to be placed in increasing order
     def swap_tableau_to_foundation(self, tableau_pile: list, foundation_pile: list):
@@ -74,7 +84,11 @@ class SolitareGameLogic:
             if tableau_pile[-1].rank != PlayingCard.ACE: return
 
         foundation_pile.append(tableau_pile.pop())
-        if len(tableau_pile) != 0: tableau_pile[-1].front_shown = True
+        if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
+            tableau_pile[-1].front_shown = True
+            self.point += 10
+
+        self.move_count += 1
 
     def swap_talon_to_foundation(self, foundation_pile: list):
         self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
