@@ -64,4 +64,4 @@ class SolitareGameLogic:
         pass
 
     def swap_foundation_to_talon(self, foundation_pile: list, tableau_pile: list):
-        pass
+        self.swap_tableau_to_tableau(foundation_pile, tableau_pile, -1)
