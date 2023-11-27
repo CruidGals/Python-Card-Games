@@ -7,8 +7,8 @@ TODO Stub:
 '''
 
 class Solitare:
-    def __init__(self, screen_height) -> None:
-        self.logic = SolitareGameLogic(screen_height)
+    def __init__(self, screen_size) -> None:
+        self.logic = SolitareGameLogic(screen_size)
         self.start_game()
 
     def start_game(self):
@@ -30,8 +30,8 @@ class Solitare:
 
 #Will include no pygame
 class SolitareGameLogic:
-    def __init__(self, screen_height) -> None:
-        self.deck = Deck(screen_height)
+    def __init__(self, screen_size) -> None:
+        self.deck = Deck(screen_size)
         self.setup_game()
 
     def setup_game(self):
@@ -87,7 +87,7 @@ class SolitareGameLogic:
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
         if len(self.stockpile) == 0:
-            self.stockpile = self.talon_pile.reverse()[:]
+            self.stockpile = self.talon_pile[::-1]
 
             for card in self.stockpile:
                 card.front_shown = False

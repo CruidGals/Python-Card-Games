@@ -4,9 +4,9 @@ import numpy as np
 import os
 
 class Deck:
-    def __init__(self, screen_height) -> None:
+    def __init__(self, screen_size) -> None:
         #Initialize all cards in one linese
-        self.deck = np.array([PlayingCard(rank, suit, screen_height) for suit in range(13,18) for rank in range(1,14)])
+        self.deck = np.array([PlayingCard(rank, suit, screen_size[1]) for suit in range(13,18) for rank in range(1,14)])
 
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
