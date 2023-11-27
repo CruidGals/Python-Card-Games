@@ -96,7 +96,6 @@ class SolitareGameLogic:
         else:
             self.talon_pile.append(self.stockpile.pop())
             self.talon_pile[-1].front_shown = True
-            print(self.talon_pile[-1].rank, self.talon_pile[-1].suit)
         
         self.move_count += 1
 
