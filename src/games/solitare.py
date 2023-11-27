@@ -33,7 +33,7 @@ class SolitareGameLogic:
     def __init__(self, screen_height) -> None:
         self.deck = Deck(screen_height)
         self.setup_game()
-        
+
     def setup_game(self):
         self.tableau = [[], [], [], [], [], [], []] #Main playing area
         self.foundation_piles = [[], [], [], []] #Piles that start with ace
@@ -45,6 +45,10 @@ class SolitareGameLogic:
 
         self.deck.shuffle_deck()
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
+
+        #Flip all cards in stockpile
+        for card in self.stockpile:
+            card.front_shown = False
 
         for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
             for j in range(i): #Range of i because of solitare shtife
@@ -83,10 +87,16 @@ class SolitareGameLogic:
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
         if len(self.stockpile) == 0:
-            self.stockpile = self.talon_pile[:]
+            self.stockpile = self.talon_pile.reverse()[:]
+
+            for card in self.stockpile:
+                card.front_shown = False
+
             self.talon_pile.clear()
         else:
             self.talon_pile.append(self.stockpile.pop())
+            self.talon_pile[-1].front_shown = True
+            print(self.talon_pile[-1].rank, self.talon_pile[-1].suit)
         
         self.move_count += 1
 
