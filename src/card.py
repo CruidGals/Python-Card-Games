@@ -30,10 +30,6 @@ class Card(pygame.sprite.Sprite):
     def update_rect(self):
         self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
 
-    def flip_all_cards(self, list):
-        for card in list:
-            card.front_shown = not card.front_shown
-
     def draw_card(self, screen, pos):
         screen.blit(self.front_image, pos) if self.front_shown else screen.blit(self.back_image, pos)
 
