@@ -1,18 +1,37 @@
 import pygame
 from card import Deck, PlayingCard
 
-class Solitare:
-    def __init__(self) -> None:
-        self.logic = SolitareGameLogic()
+'''
+TODO Stub:
+    - When picking a card, use the "in" operator to detect which pile it is in.
+'''
 
+class Solitare:
+    def __init__(self, screen_height) -> None:
+        self.logic = SolitareGameLogic(screen_height)
+        self.start_game()
+
+    def start_game(self):
+        pass
 
     def draw_elements(self):
         pass
 
+    def draw_tableau(self, screen, tableau_pile, starting_pos):
+        pos = [starting_pos[0], starting_pos[1]]
+        for card in tableau_pile:
+            card.draw_card(screen, pos)
+            pos[1] = card.front_image.get_size()[1] / 3 + pos[1]
+
+    def draw_stockpile_and_talon(self, screen, starting_pos):
+        pos = [starting_pos[0], starting_pos[1]]
+        if len(self.logic.stockpile) != 0: self.logic.stockpile[-1].draw_card(screen, pos)
+        if len(self.logic.talon_pile) != 0: self.logic.talon_pile[-1].draw_card(screen, (pos[0] + self.logic.talon_pile[-1].front_image.get_size()[0], pos[1]))
+
 #Will include no pygame
 class SolitareGameLogic:
-    def __init__(self) -> None:
-        self.deck = Deck()
+    def __init__(self, screen_height) -> None:
+        self.deck = Deck(screen_height)
         self.setup_game()
         
     def setup_game(self):
@@ -42,7 +61,7 @@ class SolitareGameLogic:
     # In solitare, to shift from tableau piles you must satisfy these conditions:
     #   1.) The cards you are shifting is of opposite color to the card you are putting it on
     #   2.) The cards you are shifting must be a number one lower than the card you are putting it on
-    # Index exists if moving a group of cards (idx should be -1) if just moving one card)
+    # Index exists if moving a group of cards (idx should be -1 if just moving one card)
     def swap_tableau_to_tableau(self, orig_pile: list, new_pile: list, idx):
 
         #Start out with a bunch of guard clauses
