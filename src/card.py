@@ -4,9 +4,9 @@ import numpy as np
 import os
 
 class Deck:
-    def __init__(self) -> None:
+    def __init__(self, screen_height) -> None:
         #Initialize all cards in one linese
-        self.deck = np.array([PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)])
+        self.deck = np.array([PlayingCard(rank, suit, screen_height) for suit in range(13,18) for rank in range(1,14)])
 
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
@@ -58,14 +58,15 @@ class PlayingCard(Card):
     CLUB = 16
     SPADE = 17
 
-    def __init__(self, rank, suit, pos=Vector2(0,0)) -> None:
+    def __init__(self, rank, suit, screen_height, pos=Vector2(0,0)) -> None:
         super(PlayingCard, self).__init__(pos)
         self.rank = rank
         self.suit = suit
         self.front_image = self.get_image()
         self.back_image = pygame.image.load(os.path.join('resources', 'cards', 'card_back.png')).convert_alpha()
 
-        self.scale_card(4)
+        scale = (screen_height / 4) / self.front_image.get_size()[0]
+        self.scale_card(scale)
 
     def get_image(self):
         if self.suit == PlayingCard.HEART:
