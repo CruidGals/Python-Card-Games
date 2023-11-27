@@ -65,7 +65,7 @@ class PlayingCard(Card):
         self.front_image = self.get_image()
         self.back_image = pygame.image.load(os.path.join('resources', 'cards', 'card_back.png')).convert_alpha()
 
-        scale = (screen_height / 4) / self.front_image.get_size()[0]
+        scale = (screen_height / 4) / self.front_image.get_size()[1]
         self.scale_card(scale)
 
     def get_image(self):
