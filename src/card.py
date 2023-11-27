@@ -105,3 +105,6 @@ class PlayingCard(Card):
                 return True
             else:
                 return False
+    
+    def is_same_card(self, card):
+        return self.suit == card.suit and self.rank == card.rank
