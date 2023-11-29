@@ -28,6 +28,10 @@ class Solitare:
         if len(self.logic.stockpile) != 0: self.logic.stockpile[-1].draw_card(screen, pos)
         if len(self.logic.talon_pile) != 0: self.logic.talon_pile[-1].draw_card(screen, (pos[0] + self.logic.talon_pile[-1].front_image.get_size()[0], pos[1]))
 
+    def draw_foundation_piles(self, screen, starting_pos):
+        pos = [starting_pos[0], starting_pos[1]]
+        
+
 #Will include no pygame
 class SolitareGameLogic:
     def __init__(self, screen_size) -> None:
@@ -47,8 +51,8 @@ class SolitareGameLogic:
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
         #Flip all cards in stockpile
-        for card in self.stockpile:
-            card.front_shown = False
+        #for card in self.stockpile:
+        #    card.front_shown = False
 
         for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
             for j in range(i): #Range of i because of solitare shtife
