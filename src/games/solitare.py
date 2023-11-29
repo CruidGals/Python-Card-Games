@@ -79,7 +79,7 @@ class SolitareGameLogic:
         else: #When a tableau pile is empty, you can only put a king on it
             if orig_pile[idx].rank != PlayingCard.KING: return
 
-        new_pile.append(orig_pile[idx:])
+        new_pile.extend(orig_pile[idx:])
         del orig_pile[idx:]
         if len(orig_pile) != 0 and not orig_pile[-1].front_shown:
             orig_pile[-1].front_shown = True
