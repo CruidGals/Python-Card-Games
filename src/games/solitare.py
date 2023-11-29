@@ -50,16 +50,16 @@ class SolitareGameLogic:
         self.deck.shuffle_deck()
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
-        #Flip all cards in stockpile
-        #for card in self.stockpile:
-        #    card.front_shown = False
-
         for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
             for j in range(i): #Range of i because of solitare shtife
                 card = self.stockpile.pop()
                 if j != i-1: card.front_shown = False
 
                 self.tableau[i-1].append(card)
+
+        #Flip all cards in stockpile
+        for card in self.stockpile:
+            card.front_shown = False
 
     def is_game_won(self):
         return len(self.foundation_piles[0]) + len(self.foundation_piles[1]) + len(self.foundation_piles[2]) + len(self.foundation_piles[3]) == 52
@@ -104,6 +104,8 @@ class SolitareGameLogic:
         self.move_count += 1
 
     def swap_talon_to_tableau(self, tableau_pile: list):
+        if len(self.talon_pile) == 0: return
+
         self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
         self.points += 5
 
