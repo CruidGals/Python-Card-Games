@@ -20,11 +20,17 @@ class Solitare:
     def draw_elements(self):
         pass
 
-    def draw_tableau(self, screen, tableau_pile, starting_pos):
+    def draw_tableau_pile(self, screen, tableau_pile, starting_pos):
         pos = [starting_pos[0], starting_pos[1]]
         for card in tableau_pile:
             card.draw_card(screen, pos)
             pos[1] = card.front_image.get_size()[1] / 3 + pos[1]
+
+    def draw_tableau(self, screen, starting_pos):
+        pos = [starting_pos[0], starting_pos[1]]
+        for pile in self.logic.tableau:
+            self.draw_tableau_pile(screen, pile, pos)
+            pos[0] = pos[0] + self.logic.deck.placeholder_card.front_image.get_size()[0] #Multiply by 1.2 to add more spacing
 
     def draw_stockpile_and_talon(self, screen, starting_pos):
         pos = [starting_pos[0], starting_pos[1]]
