@@ -45,9 +45,17 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    solitare.logic.swap_stockpile_to_talon()
+                if event.key == pygame.K_e:
+                    solitare.logic.swap_talon_to_tableau(solitare.logic.tableau[4])
 
         screen.fill('Teal')
         game.draw_elements(screen)
+
+        solitare.draw_stockpile_and_talon(screen, (100,300))
+        solitare.draw_tableau(screen, solitare.logic.tableau[4], (600, 100))
         
         pygame.display.update()
         clock.tick(60)
