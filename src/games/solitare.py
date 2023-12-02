@@ -8,7 +8,10 @@ TODO Stub:
 
 class Solitare:
     def __init__(self, screen_size) -> None:
-        self.logic = SolitareGameLogic(screen_size)
+        self.logic = SolitareGameLogic()
+
+        self.logic.deck.resize_all_cards(screen_size[1] / 6)
+
         self.start_game()
 
     def start_game(self):
@@ -34,8 +37,8 @@ class Solitare:
 
 #Will include no pygame
 class SolitareGameLogic:
-    def __init__(self, screen_size) -> None:
-        self.deck = Deck(screen_size)
+    def __init__(self) -> None:
+        self.deck = Deck()
         self.setup_game()
 
     def setup_game(self):

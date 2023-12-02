@@ -5,8 +5,8 @@ from card import Deck, Card
 from games.solitare import Solitare
 
 class Game:
-    def __init__(self, screen_size) -> None:
-        self.deck = Deck(screen_size)
+    def __init__(self) -> None:
+        self.deck = Deck()
         self.random_card = np.random.choice(self.deck.deck)
         self.random_pos = (np.random.randint(0,400), np.random.randint(0,400))
         self.background_image = pygame.transform.scale(pygame.image.load(os.path.join('resources', 'background', 'grass.jpg')).convert_alpha(), (256, 256)) #Scale to add 8-bit feeling
@@ -34,7 +34,7 @@ def main():
 
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
-    game = Game(screen_size)
+    game = Game()
 
     #Testing
     solitare = Solitare(screen_size)
