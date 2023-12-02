@@ -91,6 +91,7 @@ class SolitareGameLogic:
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
         if len(self.stockpile) == 0:
+            if len(self.talon_pile) == 0: return # Makes sure if no list out of bounds error if stockpile is exhausted
             self.stockpile = self.talon_pile[::-1]
 
             for card in self.stockpile:
