@@ -6,7 +6,7 @@ import os
 class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
-        self.deck = np.array([PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)])
+        self.deck = np.array([PlayingCard(rank, suit) for suit in range(14,18) for rank in range(1,14)])
         self.placeholder_card = Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png')))
 
     def shuffle_deck(self):
