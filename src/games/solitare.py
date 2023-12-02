@@ -57,12 +57,13 @@ class SolitareGameLogic:
         self.deck.shuffle_deck()
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
-        for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
-            for j in range(i): #Range of i because of solitare shtife
-                card = self.stockpile.pop()
-                if j != i-1: card.front_shown = False
-        
-                self.tableau[i-1].append(card)
+        #TODO TESTING
+        #for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
+        #    for j in range(i): #Range of i because of solitare shtife
+        #        card = self.stockpile.pop()
+        #        if j != i-1: card.front_shown = False
+        #
+        #        self.tableau[i-1].append(card)
 
         #Flip all cards in stockpile
         for card in self.stockpile:
@@ -125,6 +126,8 @@ class SolitareGameLogic:
         else:
             if tableau_pile[-1].rank != PlayingCard.ACE: return
 
+        #TESTING
+        print(tableau_pile[-1])
         foundation_pile.append(tableau_pile.pop())
         if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
             tableau_pile[-1].front_shown = True
@@ -133,7 +136,7 @@ class SolitareGameLogic:
         self.move_count += 1
 
     def swap_talon_to_foundation(self, foundation_pile: list):
-        self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
+        if len(self.talon_pile) != 0: self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
 
     def swap_foundation_to_tableau(self, foundation_pile: list, tableau_pile: list):
         self.swap_tableau_to_tableau(foundation_pile, tableau_pile, -1)
