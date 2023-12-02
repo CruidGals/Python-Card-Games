@@ -111,3 +111,26 @@ class PlayingCard(Card):
     
     def is_same_card(self, card):
         return self.suit == card.suit and self.rank == card.rank
+
+    def __str__(self) -> str:
+        constant_dictionary = {
+            PlayingCard.ACE: "Ace",
+            PlayingCard.TWO: "Two",
+            PlayingCard.THREE: "Three",
+            PlayingCard.FOUR: "Four",
+            PlayingCard.FIVE: "Five",
+            PlayingCard.SIX: "Six",
+            PlayingCard.SEVEN: "Seven",
+            PlayingCard.EIGHT: "Eight",
+            PlayingCard.NINE: "Nine",
+            PlayingCard.TEN: "Ten",
+            PlayingCard.JACK: "Jack",
+            PlayingCard.QUEEN: "Queen",
+            PlayingCard.KING: "King",
+            PlayingCard.HEART: "Hearts",
+            PlayingCard.DIAMOND: "Diamonds",
+            PlayingCard.CLUB: "Clubs",
+            PlayingCard.SPADE: "Spades",
+        }
+
+        return "{} of {}".format(constant_dictionary.get(self.rank), constant_dictionary.get(self.suit))
