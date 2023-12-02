@@ -35,7 +35,7 @@ class Solitare:
         pos = [starting_pos[0], starting_pos[1]]
 
         for pile in self.logic.foundation_piles:
-            pile[-1].draw_card(screen, pos) if len(pile != 0) else self.logic.deck.placeholder_card.draw_card(screen, pos)
+            pile[-1].draw_card(screen, pos) if len(pile) != 0 else self.logic.deck.placeholder_card.draw_card(screen, pos)
             pos[0] = pos[0] + self.logic.deck.placeholder_card.front_image.get_size()[0]
         
 
@@ -61,7 +61,7 @@ class SolitareGameLogic:
             for j in range(i): #Range of i because of solitare shtife
                 card = self.stockpile.pop()
                 if j != i-1: card.front_shown = False
-
+        
                 self.tableau[i-1].append(card)
 
         #Flip all cards in stockpile
