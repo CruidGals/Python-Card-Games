@@ -7,6 +7,7 @@ class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
         self.deck = np.array([PlayingCard(rank, suit) for suit in range(13,18) for rank in range(1,14)])
+        self.placeholder_card = Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png')))
 
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
@@ -27,8 +28,8 @@ class Card(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
 
     def resize_card(self, size):
-        self.front_image = pygame.transform.scale(self.front_image, (size, size))
-        self.back_image = pygame.transform.scale(self.back_image, (size, size))
+        if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
+        if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
 
     def update_rect(self):
         self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
