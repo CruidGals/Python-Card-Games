@@ -1,4 +1,5 @@
 import pygame
+import os
 from card import Deck, PlayingCard
 
 '''
@@ -9,7 +10,6 @@ TODO Stub:
 class Solitare:
     def __init__(self, screen_size) -> None:
         self.logic = SolitareGameLogic()
-
         self.logic.deck.resize_all_cards(screen_size[1] / 6)
 
         self.start_game()
@@ -33,6 +33,10 @@ class Solitare:
 
     def draw_foundation_piles(self, screen, starting_pos):
         pos = [starting_pos[0], starting_pos[1]]
+
+        for pile in self.logic.foundation_piles:
+            pile[-1].draw_card(screen, pos) if len(pile != 0) else self.logic.deck.placeholder_card.draw_card(screen, pos)
+            pos[0] = pos[0] + self.logic.deck.placeholder_card.front_image.get_size()[0]
         
 
 #Will include no pygame
