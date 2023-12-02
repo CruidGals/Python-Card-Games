@@ -15,6 +15,7 @@ class Deck:
     def resize_all_cards(self, size):
         for card in self.deck:
             card.resize_card(size)
+        self.placeholder_card.resize_card(size)
 
 class Card(pygame.sprite.Sprite):
     def __init__(self, pos=Vector2(0,0), front_image=None, back_image=None) -> None:
