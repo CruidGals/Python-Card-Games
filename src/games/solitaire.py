@@ -137,6 +137,13 @@ class SolitaireGameLogic:
             if pile2 in self.tableau:
                 self.swap_foundation_to_tableau(pile1, pile2)
         elif pile1 is self.stockpile:
+            if pile2 is self.talon_pile:
+                self.swap_stockpile_to_talon()
+        elif pile1 is self.talon_pile:
+            if pile2 in self.tableau:
+                self.swap_talon_to_tableau(pile2)
+            if pile2 in self.foundation_piles:
+                self.swap_talon_to_foundation(pile2)
 
 
     # In solitaire, to shift from tableau piles you must satisfy these conditions:
