@@ -1,5 +1,4 @@
 import pygame
-from pygame import Vector2
 import numpy as np
 import os
 
@@ -18,7 +17,8 @@ class Deck:
         self.placeholder_card.resize_card(size)
 
 class Card(pygame.sprite.Sprite):
-    def __init__(self, pos=Vector2(0,0), front_image=None, back_image=None) -> None:
+    def __init__(self, pos=(0,0), front_image=None, back_image=None) -> None:
+        pygame.sprite.Sprite.__init__(self)
         self.pos = pos
         self.front_image = front_image
         self.back_image = back_image
@@ -26,17 +26,19 @@ class Card(pygame.sprite.Sprite):
         self.front_shown = True
 
         self._layer = 0
-        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
 
     def resize_card(self, size):
         if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
         if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
 
     def update_rect(self):
-        self.rect = pygame.Rect(self.pos.x, self.pos.y, self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
+        self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
 
     def draw_card(self, screen, pos):
         screen.blit(self.front_image, pos) if self.front_shown else screen.blit(self.back_image, pos)
+        self.pos = pos
+        self.update_rect()
 
 class PlayingCard(Card):
 
@@ -64,7 +66,7 @@ class PlayingCard(Card):
     SPADE = 17
 
     #Note -- All playing cards are in 64x64 square
-    def __init__(self, rank, suit, pos=Vector2(0,0)) -> None:
+    def __init__(self, rank, suit, pos=(0,0)) -> None:
         super(PlayingCard, self).__init__(pos)
         self.rank = rank
         self.suit = suit
