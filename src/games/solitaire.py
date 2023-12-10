@@ -11,12 +11,42 @@ class Solitaire:
     def __init__(self, screen_size) -> None:
         self.logic = SolitaireGameLogic()
 
-        self.start_game(screen_size)
-
-    def start_game(self, screen_size):
-        #Must scale cards so it fits on screen: Must accomdate 5.5 card in length up and down, and 7 card length left and right
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
+
+        #For moving card
+        self.selected_card = None
+        self.selected_pile = None
+
+        self.target_pile = None
+    
+    def select_card(self, pos):
+        for card in self.logic.deck.deck:
+            if card.rect.collidepoint(pos):
+                self.selected_pile = self.logic.pile_from_card(card)
+
+                #Stockpile function
+                if self.selected_pile is self.logic.stockpile:
+                    self.target_pile = self.logic.talon_pile
+                    self.release_card(pos)
+
+                if card is self.selected_pile[-1]:
+                    self.selected_card = card
+                else:
+                    self.selected_pile = None
+                    break
+    
+    def release_card(self, pos):
+        if self.selected_pile == None: return
+        
+        if self.target_pile == None:
+            for card in self.logic.deck.deck:
+                if card.rect.collidepoint(pos):
+                    self.target_pile = self.logic.pile_from_card(card)
+        
+        swap
+                
+    #-----------------Drawing Functions-----------------#
 
     def draw_solitaire(self, screen):
         #Start the "drawing" position at the top right corner
@@ -82,11 +112,32 @@ class SolitaireGameLogic:
         #Flip all cards in stockpile
         for card in self.stockpile:
             card.front_shown = False
+    
+    #returns piles that has card
+    def pile_from_card(self, card):
+        all_piles = [self.stockpile, self.talon_pile]
+        all_piles.extend(self.tableau + self.foundation_piles)
+        for pile in all_piles:
+            if len(pile) != 0 and card in pile:
+                return pile
 
     def is_game_won(self):
         return len(self.foundation_piles[0]) + len(self.foundation_piles[1]) + len(self.foundation_piles[2]) + len(self.foundation_piles[3]) == 52
 
     #---------------- Swapping Functions ----------------#
+
+    #If has two piles of unknown identity, use this
+    def swap_piles_unknown_identity(self, pile1, pile2):
+        if pile1 in self.tableau:
+            if pile2 in self.tableau:
+                self.swap_tableau_to_tableau(pile1, pile2)
+            if pile2 in self.foundation_piles:
+                self.swap_tableau_to_foundation(pile1, pile2)
+        elif pile1 in self.foundation_piles:
+            if pile2 in self.tableau:
+                self.swap_foundation_to_tableau(pile1, pile2)
+        elif pile1 is self.stockpile:
+
 
     # In solitaire, to shift from tableau piles you must satisfy these conditions:
     #   1.) The cards you are shifting is of opposite color to the card you are putting it on
