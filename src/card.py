@@ -8,6 +8,9 @@ class Deck:
         self.deck = np.array([PlayingCard(rank, suit) for suit in range(14,18) for rank in range(1,14)])
         self.placeholder_card = Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png')))
 
+        #The images are in square format, this is to generalize it
+        self.card_size = self.placeholder_card.front_image.get_size()[0]
+
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
 
@@ -15,6 +18,7 @@ class Deck:
         for card in self.deck:
             card.resize_card(size)
         self.placeholder_card.resize_card(size)
+        self.card_size = size
 
 class Card():
     def __init__(self, pos=(0,0), front_image=None, back_image=None) -> None:
