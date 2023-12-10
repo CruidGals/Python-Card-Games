@@ -43,8 +43,15 @@ class Solitaire:
             for card in self.logic.deck.deck:
                 if card.rect.collidepoint(pos):
                     self.target_pile = self.logic.pile_from_card(card)
+            if self.target_pile == None: 
+                self.selected_pile == None
+                self.selected_card == None
+                return
         
-        swap
+        self.logic.swap_piles_unknown_identity(self.selected_pile, self.target_pile)
+        self.selected_pile = None
+        self.target_pile = None
+        self.selected_card = None
                 
     #-----------------Drawing Functions-----------------#
 
