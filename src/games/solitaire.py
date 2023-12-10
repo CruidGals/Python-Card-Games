@@ -7,9 +7,9 @@ TODO Stub:
     - When picking a card, use the "in" operator to detect which pile it is in.
 '''
 
-class Solitare:
+class Solitaire:
     def __init__(self, screen_size) -> None:
-        self.logic = SolitareGameLogic()
+        self.logic = SolitaireGameLogic()
         self.logic.deck.resize_all_cards(screen_size[1] / 6)
 
         self.start_game()
@@ -46,7 +46,7 @@ class Solitare:
         
 
 #Will include no pygame
-class SolitareGameLogic:
+class SolitaireGameLogic:
     def __init__(self) -> None:
         self.deck = Deck()
         self.setup_game()
@@ -64,7 +64,7 @@ class SolitareGameLogic:
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
         for i in range(1, 8): #Tableau col marked as i-1 (array indexing)
-            for j in range(i): #Range of i because of solitare shtife
+            for j in range(i): #Range of i because of solitaire shtife
                 card = self.stockpile.pop()
                 if j != i-1: card.front_shown = False
         
@@ -79,7 +79,7 @@ class SolitareGameLogic:
 
     #---------------- Swapping Functions ----------------#
 
-    # In solitare, to shift from tableau piles you must satisfy these conditions:
+    # In solitaire, to shift from tableau piles you must satisfy these conditions:
     #   1.) The cards you are shifting is of opposite color to the card you are putting it on
     #   2.) The cards you are shifting must be a number one lower than the card you are putting it on
     # Index exists if moving a group of cards (idx should be -1 if just moving one card)
