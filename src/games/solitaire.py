@@ -52,7 +52,14 @@ class Solitaire:
         self.selected_pile = None
         self.target_pile = None
         self.selected_card = None
-                
+
+    #-----------------Collision Functions-----------------#
+    def setup_collision_rects(self):
+        self.stockpile_collision_rect = pygame.Rect(0, 0, self.logic.deck.card_size, self.logic.deck.card_size)
+        self.talon_collision_rect = pygame.Rect(0, 0, self.logic.deck.card_size, self.logic.deck.card_size)
+        self.foundation_pile_collision_rects = [pygame.Rect(0, 0, self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
+        self.tableau_pile_collision_rects = [pygame.Rect(0, 0, self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
+
     #-----------------Drawing Functions-----------------#
 
     def draw_solitaire(self, screen):
@@ -66,7 +73,7 @@ class Solitaire:
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
         self.draw_tableau(screen, pos)
 
-    def draw_tableau_pile(self, screen, tableau_pile, starting_pos):
+    def draw_tableau_pile(self, screen, tableau_pile, collision_rect, starting_pos):
         pos = starting_pos[:]
         for card in tableau_pile:
             card.draw_card(screen, pos)
@@ -74,8 +81,8 @@ class Solitaire:
 
     def draw_tableau(self, screen, starting_pos):
         pos = starting_pos[:]
-        for pile in self.logic.tableau:
-            self.draw_tableau_pile(screen, pile, pos)
+        for i in range(7):
+            self.draw_tableau_pile(screen, self.logic.tableau[i], self.tableau_pile_collision_rects[i], pos)
             pos[0] = pos[0] + self.logic.deck.card_size #Multiply by 1.2 to add more spacing
 
     def draw_stockpile_and_talon(self, screen, starting_pos):
