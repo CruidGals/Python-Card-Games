@@ -8,7 +8,7 @@ class Deck:
         self.deck = np.array([PlayingCard(rank, suit) for suit in range(14,18) for rank in range(1,14)])
 
         #The images are in square format, this is to generalize it
-        self.card_size = self.placeholder_card.front_image.get_size()[0]
+        self.card_size = self.deck[0].front_image.get_size()[0]
 
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
