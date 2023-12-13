@@ -108,7 +108,8 @@ class Solitaire:
         self.groups = [
             pygame.sprite.LayeredUpdates(self.logic.stockpile),
             pygame.sprite.LayeredUpdates(self.logic.talon_pile),
-        ] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
+        ] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau] \
+          + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
 
     def setup_solitare(self, screen_size):
 
