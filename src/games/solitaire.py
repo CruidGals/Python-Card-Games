@@ -11,6 +11,7 @@ class Solitaire:
     def __init__(self, screen_size) -> None:
         self.logic = SolitaireGameLogic()
 
+        print('before scaling')
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
@@ -113,6 +114,9 @@ class Solitaire:
           + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
         
         self.placeholder_group = pygame.sprite.LayeredUpdates([Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png'))) for i in range(4)])
+
+        for card in self.placeholder_group.sprites():
+            card.resize_card(self.logic.deck.card_size)
 
     def setup_solitare(self, screen_size):
         self.setup_layered_groups()

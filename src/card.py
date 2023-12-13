@@ -37,15 +37,19 @@ class Card(pygame.sprite.Sprite):
     @front_shown.setter
     def front_shown(self, value: bool):
         self._front_shown = value
-
-        if not value and self.back_image:
-            self.image = self.back_image
-        else:
-            self.image = self.front_image
+        self.update_image()
     
     def resize_card(self, size):
         if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
         if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
+
+        self.update_image()
+
+    def update_image(self):
+        if not self._front_shown and self.back_image:
+            self.image = self.back_image
+        else:
+            self.image = self.front_image
 
     def update_rect(self, pos):
         self.pos = pos
