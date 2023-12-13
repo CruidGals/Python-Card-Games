@@ -49,13 +49,10 @@ class Card(pygame.sprite.Sprite):
         if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
         if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
 
-    def update_rect(self):
+    def update_rect(self, pos):
+        self.pos = pos
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
 
-    def draw_card(self, screen, pos):
-        screen.blit(self.front_image, pos) if self.front_shown else screen.blit(self.back_image, pos)
-        self.pos = pos
-        self.update_rect()
 
 class PlayingCard(Card):
 
