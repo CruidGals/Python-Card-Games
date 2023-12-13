@@ -39,10 +39,29 @@ class Solitaire:
         
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
-                if collision_rect is self.stockpile_collision_rect and self.selected_pile == self.logic.stockpile:
-                    self.logic.swap_stockpile_to_talon()
+
+                if self.selected_card == None: #Semi-guard clause
+                    if self.selected_pile is self.logic.stockpile and self.selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
+                        self.logic.swap_stockpile_to_talon()
+                    break
+
+                if self.selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
+                    pass #TODO Make automatic card player
                 elif collision_rect in self.tableau_pile_collision_rects:
-                    idx = self.tableau_pile_collision_rects.index(collision_rect) #Grab index to index actual tableau tile
+                    tableau_pile = self.pile_from_collision_rect(collision_rect)
+
+                    if self.selected_pile is self.logic.talon_pile:
+                        self.logic.swap_talon_to_tableau(tableau_pile)
+                    elif self.selected_pile in self.logic.tableau:
+                        self.logic.swap_tableau_to_tableau(self.selected_pile, tableau_pile)
+                    elif self.selected_pile in self.logic.foundation_piles:
+                        self.logic.swap_foundation_to_tableau(self.selected_pile, tableau_pile)
+                
+                elif collision_rect in self.foundation_pile_collision_rects:
+                    foundation_pile = self.pile_from_collision_rect(collision_rect)
+
+                    if self.selected_pile in self.logic.tableau:
+                        self.logic.swap_tableau_to_foundation(self.selected_pile, foundation_pile)
                 
                 break
             
