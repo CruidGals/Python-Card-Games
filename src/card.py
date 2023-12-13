@@ -24,6 +24,7 @@ class Card(pygame.sprite.Sprite):
         self.pos = pos
         self.front_image = front_image
         self.back_image = back_image
+        self._layer = 0
 
         self.front_shown = True # Will automatically set self.image to self.front_image as property
 

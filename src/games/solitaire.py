@@ -14,6 +14,7 @@ class Solitaire:
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
+        self.setup_solitare(screen_size)
         self.setup_collision_rects(screen_size)
 
         #For moving card
@@ -78,7 +79,7 @@ class Solitaire:
         
         self.stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += self.logic.deck.card_size
-        self.talon_collision_rect = pygame.Rect(pos[0]. pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
+        self.talon_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += 2 * self.logic.deck.card_size
         self.foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
@@ -134,6 +135,7 @@ class Solitaire:
             pos = [pos[0] + self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
 
     def draw_solitaire(self, screen):
+        self.placeholder_group.draw(screen)
         for group in self.groups: group.draw(screen)
 
 #Will include no pygame
@@ -158,6 +160,7 @@ class SolitaireGameLogic:
             for j in range(i): #Range of i because of solitaire shtife
                 card = self.stockpile.pop()
                 if j != i-1: card.front_shown = False
+                else: card.front_shown = True # Corrects error in front_shown property
         
                 self.tableau[i-1].append(card)
 
