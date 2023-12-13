@@ -19,44 +19,36 @@ class Solitaire:
         #For moving card
         self.selected_card = None
         self.selected_pile = None
-
-        self.target_pile = None
     
+    # Should only be called on mouse clicked
     def select_card(self, pos):
         for card in self.logic.deck.deck:
             if card.rect.collidepoint(pos):
                 self.selected_pile = self.logic.pile_from_card(card)
-
-                #Stockpile function
-                if self.selected_pile is self.logic.stockpile:
-                    self.target_pile = self.logic.talon_pile
-                    self.release_card(pos)
-
-                if card is self.selected_pile[-1]:
+                if card.front_shown: 
                     self.selected_card = card
-                else:
-                    self.selected_pile = None
-                    break
+                break
     
+    # Should only be called on mouse held
     def move_card(self, pos):
         pass
-
+    
+    # Should only be called on mouse release
     def release_card(self, pos):
         if self.selected_pile == None: return
         
-        if self.target_pile == None:
-            for card in self.logic.deck.deck:
-                if card.rect.collidepoint(pos):
-                    self.target_pile = self.logic.pile_from_card(card)
-            if self.target_pile == None: 
-                self.selected_pile == None
-                self.selected_card == None
-                return
-        
-        self.logic.swap_piles_unknown_identity(self.selected_pile, self.target_pile)
-        self.selected_pile = None
-        self.target_pile = None
+        for collision_rect in self.all_collision_rects():
+            if collision_rect.collidepoint(pos):
+                if collision_rect is self.stockpile_collision_rect and self.selected_pile == self.logic.stockpile:
+                    self.logic.swap_stockpile_to_talon()
+                elif collision_rect in self.tableau_pile_collision_rects:
+                    idx = self.tableau_pile_collision_rects.index(collision_rect) #Grab index to index actual tableau tile
+                
+                break
+            
+
         self.selected_card = None
+        self.selected_pile = None
 
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
@@ -76,6 +68,18 @@ class Solitaire:
     def all_collision_rects(self) -> list:
         all_rects = [self.stockpile_collision_rect, self.talon_collision_rect]
         all_rects.extend(self.tableau_pile_collision_rects, self.foundation_pile_collision_rects)
+
+        return all_rects
+    
+    def pile_from_collision_rect(self, collision_rect):
+        if collision_rect is self.stockpile_collision_rect:
+            return self.logic.stockpile
+        elif collision_rect is self.talon_collision_rect:
+            return self.logic.talon_pile
+        elif collision_rect in self.tableau_pile_collision_rects:
+            return self.logic.tableau[self.tableau_pile_collision_rects.index(collision_rect)]
+        else: #if collision_rect ins foundation piles
+            return self.logic.foundation_piles[self.foundation_pile_collision_rects.index(collision_rect)]
 
     #-----------------Drawing Functions-----------------#
 
