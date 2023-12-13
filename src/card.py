@@ -6,7 +6,6 @@ class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
         self.deck = np.array([PlayingCard(rank, suit) for suit in range(14,18) for rank in range(1,14)])
-        self.placeholder_card = Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png')))
 
         #The images are in square format, this is to generalize it
         self.card_size = self.placeholder_card.front_image.get_size()[0]

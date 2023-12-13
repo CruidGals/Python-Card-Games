@@ -1,6 +1,6 @@
 import pygame
 import os
-from card import Deck, PlayingCard
+from card import *
 
 '''
 TODO Stub:
@@ -110,19 +110,28 @@ class Solitaire:
             pygame.sprite.LayeredUpdates(self.logic.talon_pile),
         ] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau] \
           + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
+        
+        self.placeholder_group = pygame.sprite.LayeredUpdates([Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png'))) for i in range(4)])
 
     def setup_solitare(self, screen_size):
+        self.setup_layered_groups()
 
         center = (screen_size[0]/2, screen_size[1]/2)
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
         
-        self.stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
-        pos[0] += self.logic.deck.card_size
-        self.talon_collision_rect = pygame.Rect(pos[0]. pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
-        pos[0] += 2 * self.logic.deck.card_size
-        self.foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
+        # Setup positions (rect) for each card (skip talon pile + foundation piles since there should be no cards there to start)
+        for card in self.logic.stockpile:
+            card.update_rect(pos)
+        pos[0] += 3 * self.logic.deck.card_size
+        for card in self.placeholder_group.sprites():
+            card.update_rect(pos)
+            pos[0] += self.logic.deck.card_size
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
-        self.tableau_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
+        for pile in self.logic.tableau:
+            for card in pile:
+                card.update_rect(pos)
+                pos[1] += card.front_image.get_size()[1] / 4
+            pos = [pos[0] + self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
 
     def draw_solitaire(self, screen):
         #Start the "drawing" position at the top right corner
