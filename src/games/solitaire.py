@@ -38,6 +38,9 @@ class Solitaire:
                     self.selected_pile = None
                     break
     
+    def move_card(self, pos):
+        pass
+
     def release_card(self, pos):
         if self.selected_pile == None: return
         
