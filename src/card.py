@@ -20,16 +20,31 @@ class Deck:
         self.placeholder_card.resize_card(size)
         self.card_size = size
 
-class Card():
+class Card(pygame.sprite.Sprite):
     def __init__(self, pos=(0,0), front_image=None, back_image=None) -> None:
+        pygame.sprite.Sprite.__init__(self)
+
         self.pos = pos
         self.front_image = front_image
         self.back_image = back_image
 
-        self.front_shown = True
+        self.front_shown = True # Will automatically set self.image to self.front_image as property
 
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
 
+    @property
+    def front_shown(self):
+        return self._front_shown
+    
+    @front_shown.setter
+    def front_shown(self, value: bool):
+        self._front_shown = value
+
+        if not value and self.back_image:
+            self.image = self.back_image
+        else:
+            self.image = self.front_image
+    
     def resize_card(self, size):
         if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
         if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
