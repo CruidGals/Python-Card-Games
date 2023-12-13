@@ -14,9 +14,7 @@ class Deck:
         np.random.shuffle(self.deck)
 
     def resize_all_cards(self, size):
-        for card in self.deck:
-            card.resize_card(size)
-        self.placeholder_card.resize_card(size)
+        for card in self.deck: card.resize_card(size)
         self.card_size = size
 
 class Card(pygame.sprite.Sprite):
