@@ -104,6 +104,25 @@ class Solitaire:
 
     #-----------------Drawing Functions-----------------#
 
+    def setup_layered_groups(self):
+        self.groups = [
+            pygame.sprite.LayeredUpdates(self.logic.stockpile),
+            pygame.sprite.LayeredUpdates(self.logic.talon_pile),
+        ] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
+
+    def setup_solitare(self, screen_size):
+
+        center = (screen_size[0]/2, screen_size[1]/2)
+        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
+        
+        self.stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
+        pos[0] += self.logic.deck.card_size
+        self.talon_collision_rect = pygame.Rect(pos[0]. pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
+        pos[0] += 2 * self.logic.deck.card_size
+        self.foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
+        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
+        self.tableau_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
+
     def draw_solitaire(self, screen):
         #Start the "drawing" position at the top right corner
         center = (screen.get_size()[0]/2, screen.get_size()[1]/2)
