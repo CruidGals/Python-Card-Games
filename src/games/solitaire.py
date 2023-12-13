@@ -190,8 +190,7 @@ class SolitaireGameLogic:
     
     #returns piles that has card
     def pile_from_card(self, card):
-        all_piles = [self.stockpile, self.talon_pile]
-        all_piles.extend(self.tableau + self.foundation_piles)
+        all_piles = [self.stockpile, self.talon_pile] + self.tableau + self.foundation_piles
         for pile in all_piles:
             if len(pile) != 0 and card in pile:
                 return pile
