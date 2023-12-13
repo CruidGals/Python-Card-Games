@@ -72,6 +72,8 @@ class Solitaire:
         return all_rects
     
     def pile_from_collision_rect(self, collision_rect):
+        if collision_rect not in self.all_collision_rects(): return
+
         if collision_rect is self.stockpile_collision_rect:
             return self.logic.stockpile
         elif collision_rect is self.talon_collision_rect:
