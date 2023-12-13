@@ -134,40 +134,7 @@ class Solitaire:
             pos = [pos[0] + self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
 
     def draw_solitaire(self, screen):
-        #Start the "drawing" position at the top right corner
-        center = (screen.get_size()[0]/2, screen.get_size()[1]/2)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
-
-        self.draw_stockpile_and_talon(screen, pos)
-        pos[0] += 3 * self.logic.deck.card_size
-        self.draw_foundation_piles(screen, pos)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
-        self.draw_tableau(screen, pos)
-
-    def draw_tableau_pile(self, screen, tableau_pile, collision_rect, starting_pos):
-        pos = starting_pos[:]
-        for card in tableau_pile:
-            card.draw_card(screen, pos)
-            pos[1] = card.front_image.get_size()[1] / 4 + pos[1]
-
-    def draw_tableau(self, screen, starting_pos):
-        pos = starting_pos[:]
-        for i in range(7):
-            self.draw_tableau_pile(screen, self.logic.tableau[i], self.tableau_pile_collision_rects[i], pos)
-            pos[0] = pos[0] + self.logic.deck.card_size #Multiply by 1.2 to add more spacing
-
-    def draw_stockpile_and_talon(self, screen, starting_pos):
-        pos = starting_pos[:]
-        if len(self.logic.stockpile) != 0: self.logic.stockpile[-1].draw_card(screen, pos)
-        if len(self.logic.talon_pile) != 0: self.logic.talon_pile[-1].draw_card(screen, (pos[0] + self.logic.deck.card_size, pos[1]))
-
-    def draw_foundation_piles(self, screen, starting_pos):
-        pos = starting_pos[:]
-
-        for pile in self.logic.foundation_piles:
-            pile[-1].draw_card(screen, pos) if len(pile) != 0 else self.logic.deck.placeholder_card.draw_card(screen, pos)
-            pos[0] = pos[0] + self.logic.deck.card_size
-        
+        for group in self.groups: group.draw(screen)
 
 #Will include no pygame
 class SolitaireGameLogic:
