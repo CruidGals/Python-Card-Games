@@ -15,7 +15,7 @@ class Solitaire:
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
-        self.update_card_positions(screen_size)
+        self.update_all_card_positions(screen_size)
         self.setup_collision_rects(screen_size)
 
         #For moving card
@@ -118,7 +118,7 @@ class Solitaire:
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
 
-    def update_card_positions(self, screen_size):
+    def update_all_card_positions(self, screen_size):
         self.setup_layered_groups()
 
         center = (screen_size[0]/2, screen_size[1]/2)
@@ -126,9 +126,17 @@ class Solitaire:
         
         for card in self.logic.stockpile:
             card.update_rect(pos)
-        pos[0] += 3 * self.logic.deck.card_size
+        pos[0] += self.logic.deck.card_size
+        for card in self.logic.talon_pile:
+            card.update_rect(pos)
+        pos[0] += 2 * self.logic.deck.card_size
         for card in self.placeholder_group.sprites():
             card.update_rect(pos)
+            pos[0] += self.logic.deck.card_size
+        pos[0] -= 4 * self.logic.deck.card_size
+        for pile in self.logic.foundation_piles():
+            for card in pile:
+                card.update_rect(pos)
             pos[0] += self.logic.deck.card_size
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
         for pile in self.logic.tableau:
