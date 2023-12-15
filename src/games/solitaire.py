@@ -15,20 +15,20 @@ class Solitaire:
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
-        self.setup_solitare(screen_size)
+        self.update_card_positions(screen_size)
         self.setup_collision_rects(screen_size)
 
         #For moving card
-        self.selected_card = None
-        self.selected_pile = None
+        self._selected_card = None
+        self._selected_pile = None
     
     # Should only be called on mouse clicked
     def select_card(self, pos):
         for card in self.logic.deck.deck:
             if card.rect.collidepoint(pos):
-                self.selected_pile = self.logic.pile_from_card(card)
+                self._selected_pile = self.logic.pile_from_card(card)
                 if card.front_shown: 
-                    self.selected_card = card
+                    self._selected_card = card
                 break
     
     # Should only be called on mouse held
@@ -37,39 +37,39 @@ class Solitaire:
     
     # Should only be called on mouse release
     def release_card(self, pos):
-        if self.selected_pile == None: return
+        if self._selected_pile == None: return
         
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
 
-                if self.selected_card == None: #Semi-guard clause
-                    if self.selected_pile is self.logic.stockpile and self.selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
+                if self._selected_card == None: #Semi-guard clause
+                    if self._selected_pile is self.logic.stockpile and self._selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
                         self.logic.swap_stockpile_to_talon()
                     break
 
-                if self.selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
+                if self._selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
                     pass #TODO Make automatic card player
-                elif collision_rect in self.tableau_pile_collision_rects:
+                elif collision_rect in self._tableau_pile_collision_rects:
                     tableau_pile = self.pile_from_collision_rect(collision_rect)
 
-                    if self.selected_pile is self.logic.talon_pile:
+                    if self._selected_pile is self.logic.talon_pile:
                         self.logic.swap_talon_to_tableau(tableau_pile)
-                    elif self.selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_tableau(self.selected_pile, tableau_pile)
-                    elif self.selected_pile in self.logic.foundation_piles:
-                        self.logic.swap_foundation_to_tableau(self.selected_pile, tableau_pile)
+                    elif self._selected_pile in self.logic.tableau:
+                        self.logic.swap_tableau_to_tableau(self._selected_pile, tableau_pile)
+                    elif self._selected_pile in self.logic.foundation_piles:
+                        self.logic.swap_foundation_to_tableau(self._selected_pile, tableau_pile)
                 
-                elif collision_rect in self.foundation_pile_collision_rects:
+                elif collision_rect in self._foundation_pile_collision_rects:
                     foundation_pile = self.pile_from_collision_rect(collision_rect)
 
-                    if self.selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_foundation(self.selected_pile, foundation_pile)
+                    if self._selected_pile in self.logic.tableau:
+                        self.logic.swap_tableau_to_foundation(self._selected_pile, foundation_pile)
                 
                 break
             
 
-        self.selected_card = None
-        self.selected_pile = None
+        self._selected_card = None
+        self._selected_pile = None
 
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
@@ -78,31 +78,31 @@ class Solitaire:
         center = (screen_size[0]/2, screen_size[1]/2)
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
         
-        self.stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
+        self._stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += self.logic.deck.card_size
-        self.talon_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
+        self._talon_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += 2 * self.logic.deck.card_size
-        self.foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
+        self._foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
-        self.tableau_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
+        self._tableau_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
     
     def all_collision_rects(self) -> list:
-        all_rects = [self.stockpile_collision_rect, self.talon_collision_rect]
-        all_rects.extend(self.tableau_pile_collision_rects, self.foundation_pile_collision_rects)
+        all_rects = [self._stockpile_collision_rect, self._talon_collision_rect]
+        all_rects.extend(self._tableau_pile_collision_rects, self._foundation_pile_collision_rects)
 
         return all_rects
     
     def pile_from_collision_rect(self, collision_rect):
         if collision_rect not in self.all_collision_rects(): return
 
-        if collision_rect is self.stockpile_collision_rect:
+        if collision_rect is self._stockpile_collision_rect:
             return self.logic.stockpile
-        elif collision_rect is self.talon_collision_rect:
+        elif collision_rect is self._talon_collision_rect:
             return self.logic.talon_pile
-        elif collision_rect in self.tableau_pile_collision_rects:
-            return self.logic.tableau[self.tableau_pile_collision_rects.index(collision_rect)]
+        elif collision_rect in self._tableau_pile_collision_rects:
+            return self.logic.tableau[self._tableau_pile_collision_rects.index(collision_rect)]
         else: #if collision_rect ins foundation piles
-            return self.logic.foundation_piles[self.foundation_pile_collision_rects.index(collision_rect)]
+            return self.logic.foundation_piles[self._foundation_pile_collision_rects.index(collision_rect)]
 
     #-----------------Drawing Functions-----------------#
 
@@ -118,13 +118,12 @@ class Solitaire:
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
 
-    def setup_solitare(self, screen_size):
+    def update_card_positions(self, screen_size):
         self.setup_layered_groups()
 
         center = (screen_size[0]/2, screen_size[1]/2)
         pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
         
-        # Setup positions (rect) for each card (skip talon pile + foundation piles since there should be no cards there to start)
         for card in self.logic.stockpile:
             card.update_rect(pos)
         pos[0] += 3 * self.logic.deck.card_size
