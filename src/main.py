@@ -25,13 +25,22 @@ class Game:
             for y in range(tilesY):
                 screen.blit(self.background_image, (x * imageWidth, y * imageHeight))
 
+    def select_card(self, pos):
+        pass
+
+    def move_card(self, pos):
+        pass
+
+    def release_card(self, pos):
+        pass
+
     def draw_elements(self, screen):
         self.draw_background(screen)
         self.solitaire.draw_solitaire(screen)
 
 def main():
     pygame.init()
-    screen_size = (1500, 1300)
+    screen_size = (1300, 900)
 
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
@@ -43,6 +52,12 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                game.select_card(event.pos)
+            if event.type == pygame.MOUSEBUTTONUP:
+                game.release_card(event.pos)
+            if pygame.mouse.get_pressed[0]:
+                game.move_card(event.pos)
 
         screen.fill('Teal')
         game.draw_elements(screen)
