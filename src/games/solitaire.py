@@ -11,6 +11,8 @@ class Solitaire:
     def __init__(self, screen_size) -> None:
         self.logic = SolitaireGameLogic()
 
+        self._center = (screen_size[0]/2, screen_size[1]/2)
+
         print('before scaling')
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
@@ -74,16 +76,15 @@ class Solitaire:
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
     # Use index() to correctly match tableau or foundation collision rects with corresponding pile
-    def setup_collision_rects(self, screen_size):
-        center = (screen_size[0]/2, screen_size[1]/2)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
+    def setup_collision_rects(self):
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 2.5 * self.logic.deck.card_size]
         
         self._stockpile_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += self.logic.deck.card_size
         self._talon_collision_rect = pygame.Rect(pos[0], pos[1], self.logic.deck.card_size, self.logic.deck.card_size)
         pos[0] += 2 * self.logic.deck.card_size
         self._foundation_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size) for i in range(4)]
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
         self._tableau_pile_collision_rects = [pygame.Rect(pos[0] + i * self.logic.deck.card_size, pos[1], self.logic.deck.card_size, self.logic.deck.card_size * 7) for i in range(7)]
     
     def all_collision_rects(self) -> list:
@@ -108,11 +109,10 @@ class Solitaire:
     # Sprites in pygame takes certain x and y positions from its rect to draw the image
     # These functions update the rect with new positions so that the card draws in the correct place
 
-    def update_all_card_positions(self, screen_size):
+    def update_all_card_positions(self):
         self.setup_layered_groups()
 
-        center = (screen_size[0]/2, screen_size[1]/2)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 2.5 * self.logic.deck.card_size]
         
         self._update_stockpile_cards_pos(pos)
         pos[0] += self.logic.deck.card_size
@@ -120,11 +120,14 @@ class Solitaire:
         pos[0] += 2 * self.logic.deck.card_size
         self._update_placeholder_card_pos(pos)
         self._update_foundation_pile_cards_pos(pos, self.logic.foundation_piles)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
         self._update_tableau_pile_cards_pos(pos, self.logic.tableau)
 
     def update_card_position(self, card):
-        pass
+        pile = self.logic.pile_from_card(card)
+
+        if pile is self.logic.stockpile:
+            
 
     def _update_stockpile_cards_pos(self, pos):
         for card in self.logic.stockpile:
