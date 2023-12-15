@@ -104,6 +104,66 @@ class Solitaire:
         else: #if collision_rect ins foundation piles
             return self.logic.foundation_piles[self._foundation_pile_collision_rects.index(collision_rect)]
 
+    #-----------------Card Position Updating Functions-----------------#
+    # Sprites in pygame takes certain x and y positions from its rect to draw the image
+    # These functions update the rect with new positions so that the card draws in the correct place
+
+    def update_all_card_positions(self, screen_size):
+        self.setup_layered_groups()
+
+        center = (screen_size[0]/2, screen_size[1]/2)
+        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
+        
+        self._update_stockpile_cards_pos(pos)
+        pos[0] += self.logic.deck.card_size
+        self._update_talon_pile_cards_pos(pos)
+        pos[0] += 2 * self.logic.deck.card_size
+        self._update_placeholder_card_pos(pos)
+        self._update_foundation_pile_cards_pos(pos, self.logic.foundation_piles)
+        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
+        self._update_tableau_pile_cards_pos(pos, self.logic.tableau)
+
+    def update_card_position(self, card):
+        pass
+
+    def _update_stockpile_cards_pos(self, pos):
+        for card in self.logic.stockpile:
+            card.update_rect(pos)
+    
+    def _update_talon_pile_cards_pos(self, pos):
+        for card in self.logic.talon_pile:
+            card.update_rect(pos)
+    
+    def _update_placeholder_card_pos(self, pos):
+        for card in self.placeholder_group.sprites():
+            card.update_rect(pos)
+            pos[0] += self.logic.deck.card_size
+        pos[0] -= 4 * self.logic.deck.card_size #Resets the position
+
+    def _update_foundation_pile_cards_pos(self, pos, target_piles):
+        for pile in self.logic.foundation_piles:
+            if pile not in target_piles: #Function used to enhance performace (so positions of every card aren't updated)
+                pos[0] += self.logic.deck.card_size
+                continue
+
+            for card in pile:
+                card.update_rect(pos)
+            pos[0] += self.logic.deck.card_size
+        pos[0] -= 4 * self.logic.deck.card_size #Resets the position
+        
+    def _update_tableau_pile_cards_pos(self, pos, target_piles):
+        for pile in self.logic.tableau: #Update positions for cards in tableau piles
+            if pile not in target_piles: #Function used to enhance performace (so positions of every card aren't updated)
+                pos[0] += self.logic.deck.card_size
+                continue
+
+            for card in pile:
+                card.update_rect(pos)
+                pos[1] += card.front_image.get_size()[1] / 4
+            pos = [pos[0] + self.logic.deck.card_size, pos[1] - (len(pile) * (self.logic.deck.card_size / 4))]
+        
+        pos[0] -= 7 * self.logic.deck.card_size
+
     #-----------------Drawing Functions-----------------#
 
     def setup_layered_groups(self):
@@ -117,33 +177,6 @@ class Solitaire:
 
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
-
-    def update_all_card_positions(self, screen_size):
-        self.setup_layered_groups()
-
-        center = (screen_size[0]/2, screen_size[1]/2)
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 2.5 * self.logic.deck.card_size]
-        
-        for card in self.logic.stockpile:
-            card.update_rect(pos)
-        pos[0] += self.logic.deck.card_size
-        for card in self.logic.talon_pile:
-            card.update_rect(pos)
-        pos[0] += 2 * self.logic.deck.card_size
-        for card in self.placeholder_group.sprites():
-            card.update_rect(pos)
-            pos[0] += self.logic.deck.card_size
-        pos[0] -= 4 * self.logic.deck.card_size
-        for pile in self.logic.foundation_piles():
-            for card in pile:
-                card.update_rect(pos)
-            pos[0] += self.logic.deck.card_size
-        pos = [center[0] - 3.5 * self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
-        for pile in self.logic.tableau:
-            for card in pile:
-                card.update_rect(pos)
-                pos[1] += card.front_image.get_size()[1] / 4
-            pos = [pos[0] + self.logic.deck.card_size, center[1] - 1.25 * self.logic.deck.card_size]
 
     def draw_solitaire(self, screen):
         self.placeholder_group.draw(screen)
