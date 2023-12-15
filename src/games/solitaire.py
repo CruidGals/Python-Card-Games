@@ -23,6 +23,7 @@ class Solitaire:
         #For moving card
         self._selected_card = None
         self._selected_pile = None
+        self._previous_pos = (0, 0)
     
     # Should only be called on mouse clicked
     def select_card(self, pos):
@@ -35,7 +36,9 @@ class Solitaire:
     
     # Should only be called on mouse held
     def move_card(self, pos):
-        pass
+        delta = pos - self._previous_pos
+        self._selected_card.update_rect([self._selected_card.pos[0] + delta[0], self._selected_card.pos[1] + delta[1]])
+        self._previous_pos = pos[:]
     
     # Should only be called on mouse release
     def release_card(self, pos):
@@ -68,7 +71,8 @@ class Solitaire:
                         self.logic.swap_tableau_to_foundation(self._selected_pile, foundation_pile)
                 
                 break
-            
+        
+        self.update_card_position(self._selected_card)
 
         self._selected_card = None
         self._selected_pile = None
