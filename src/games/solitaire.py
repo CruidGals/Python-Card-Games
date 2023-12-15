@@ -23,7 +23,7 @@ class Solitaire:
         #For moving card
         self._selected_card = None
         self._selected_pile = None
-        self._previous_pos = (0, 0)
+        self._previous_pos = None
     
     # Should only be called on mouse clicked
     def select_card(self, pos):
@@ -36,7 +36,7 @@ class Solitaire:
     
     # Should only be called on mouse held
     def move_card(self, pos):
-        delta = pos - self._previous_pos
+        delta = pos - self._previous_pos if self._previous_pos != None else pos
         self._selected_card.update_rect([self._selected_card.pos[0] + delta[0], self._selected_card.pos[1] + delta[1]])
         self._previous_pos = pos[:]
     
@@ -76,6 +76,7 @@ class Solitaire:
 
         self._selected_card = None
         self._selected_pile = None
+        self._previous_pos = None
 
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
