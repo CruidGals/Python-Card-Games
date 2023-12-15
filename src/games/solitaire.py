@@ -126,8 +126,19 @@ class Solitaire:
     def update_card_position(self, card):
         pile = self.logic.pile_from_card(card)
 
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 2.5 * self.logic.deck.card_size]
+
         if pile is self.logic.stockpile:
-            
+            self._update_stockpile_cards_pos(pos)
+        pos[0] += self.logic.deck.card_size
+        if pile is self.logic.talon_pile:
+            self._update_talon_pile_cards_pos(pos)
+        pos[0] += 2 * self.logic.deck.card_size
+        if pile in self.logic.foundation_piles:
+            self._update_foundation_pile_cards_pos(pos, [pile])
+        pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
+        if pile in self.logic.tableau:
+            self._update_tableau_pile_cards_pos(pos, [pile])
 
     def _update_stockpile_cards_pos(self, pos):
         for card in self.logic.stockpile:
