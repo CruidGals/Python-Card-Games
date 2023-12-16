@@ -13,7 +13,6 @@ class Solitaire:
 
         self._center = (screen_size[0]/2, screen_size[1]/2)
 
-        print('before scaling')
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
@@ -36,6 +35,8 @@ class Solitaire:
     
     # Should only be called on mouse held
     def move_card(self, pos):
+        if self._selected_card == None: return
+
         delta = [pos[0] - self._previous_pos[0], pos[1] - self._previous_pos[1]] if self._previous_pos != None else [0,0]
         self._selected_card.update_rect([self._selected_card.pos[0] + delta[0], self._selected_card.pos[1] + delta[1]])
         self._previous_pos = pos[:]
@@ -49,6 +50,7 @@ class Solitaire:
 
                 if self._selected_card == None: #Semi-guard clause
                     if self._selected_pile is self.logic.stockpile and self._selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
+                        self._selected_card = self.logic.stockpile[-1]
                         self.logic.swap_stockpile_to_talon()
                     break
 
@@ -232,11 +234,11 @@ class SolitaireGameLogic:
             card.front_shown = False
     
     #returns piles that has card
-    def pile_from_card(self, card):
+    def pile_from_card(self, target_card):
         all_piles = [self.stockpile, self.talon_pile] + self.tableau + self.foundation_piles
         for pile in all_piles:
-            if len(pile) != 0 and card in pile:
-                return pile
+            for card in pile: 
+                if card is target_card: return pile
 
     def is_game_won(self):
         return len(self.foundation_piles[0]) + len(self.foundation_piles[1]) + len(self.foundation_piles[2]) + len(self.foundation_piles[3]) == 52
