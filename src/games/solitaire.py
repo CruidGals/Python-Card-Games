@@ -17,8 +17,8 @@ class Solitaire:
         scale = min(screen_size[0]/7, screen_size[1]/5.5)
         self.logic.deck.resize_all_cards(scale)
 
-        self.update_all_card_positions(screen_size)
-        self.setup_collision_rects(screen_size)
+        self.update_all_card_positions()
+        self.setup_collision_rects()
 
         #For moving card
         self._selected_card = None
@@ -36,7 +36,7 @@ class Solitaire:
     
     # Should only be called on mouse held
     def move_card(self, pos):
-        delta = pos - self._previous_pos if self._previous_pos != None else pos
+        delta = [pos[0] - self._previous_pos[0], pos[1] - self._previous_pos[1]] if self._previous_pos != None else [0,0]
         self._selected_card.update_rect([self._selected_card.pos[0] + delta[0], self._selected_card.pos[1] + delta[1]])
         self._previous_pos = pos[:]
     
@@ -60,7 +60,7 @@ class Solitaire:
                     if self._selected_pile is self.logic.talon_pile:
                         self.logic.swap_talon_to_tableau(tableau_pile)
                     elif self._selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_tableau(self._selected_pile, tableau_pile)
+                        self.logic.swap_tableau_to_tableau(self._selected_pile, tableau_pile, -1)
                     elif self._selected_pile in self.logic.foundation_piles:
                         self.logic.swap_foundation_to_tableau(self._selected_pile, tableau_pile)
                 
@@ -94,7 +94,7 @@ class Solitaire:
     
     def all_collision_rects(self) -> list:
         all_rects = [self._stockpile_collision_rect, self._talon_collision_rect]
-        all_rects.extend(self._tableau_pile_collision_rects, self._foundation_pile_collision_rects)
+        all_rects.extend(self._tableau_pile_collision_rects + self._foundation_pile_collision_rects)
 
         return all_rects
     
@@ -318,7 +318,7 @@ class SolitaireGameLogic:
         foundation_pile.append(tableau_pile.pop())
         if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
             tableau_pile[-1].front_shown = True
-            self.point += 10
+            self.points += 10
 
         self.move_count += 1
 
