@@ -28,10 +28,13 @@ class Solitaire:
     def select_card(self, pos):
         for card in self.logic.deck.deck:
             if card.rect.collidepoint(pos):
-                self._selected_pile = self.logic.pile_from_card(card)
                 if card.front_shown: 
                     self._selected_card = card
                 break
+        
+        for collision_rect in self.all_collision_rects():
+            if collision_rect.collidepoint(pos):
+                self._selected_pile = self.pile_from_collision_rect(collision_rect)
     
     # Should only be called on mouse held
     def move_card(self, pos):
@@ -49,10 +52,14 @@ class Solitaire:
             if collision_rect.collidepoint(pos):
 
                 if self._selected_card == None: #Semi-guard clause
-                    if self._selected_pile is self.logic.stockpile and self._selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
-                        self._selected_card = self.logic.stockpile[-1]
+                    if self._selected_pile is self.logic.stockpile: # if the pile is stockpile
                         self.logic.swap_stockpile_to_talon()
-                        self._selected_card
+
+                        if len(self.logic.talon_pile) != 0: 
+                            self._selected_card = self.logic.talon_pile[-1]
+                        else:
+                            self.update_pile_card_positions(self.logic.stockpile[0])
+
                     break
 
                 if self._selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
@@ -75,9 +82,9 @@ class Solitaire:
                 
                 break
         
-        self._selected_card.groups()[0].move_to_front(self._selected_card)
-
-        self.update_card_position(self._selected_card)
+        if self._selected_card: 
+            self._selected_card.groups()[0].move_to_front(self._selected_card)
+            self.update_pile_card_positions(self._selected_card)
 
         self._selected_card = None
         self._selected_pile = None
@@ -133,7 +140,8 @@ class Solitaire:
         pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
         self._update_tableau_pile_cards_pos(pos, self.logic.tableau)
 
-    def update_card_position(self, card):
+    #Updates all card positions in a pile
+    def update_pile_card_positions(self, card):
         pile = self.logic.pile_from_card(card)
 
         pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 2.5 * self.logic.deck.card_size]
