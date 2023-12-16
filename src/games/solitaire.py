@@ -197,7 +197,7 @@ class Solitaire:
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
 
-    def draw_solitaire(self, screen):
+    def draw_elements(self, screen):
         self.placeholder_group.draw(screen)
         for group in self.groups: group.draw(screen)
 
