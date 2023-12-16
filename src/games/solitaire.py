@@ -52,6 +52,7 @@ class Solitaire:
                     if self._selected_pile is self.logic.stockpile and self._selected_pile is self.pile_from_collision_rect(collision_rect): # if the pile is stockpile
                         self._selected_card = self.logic.stockpile[-1]
                         self.logic.swap_stockpile_to_talon()
+                        self._selected_card
                     break
 
                 if self._selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
@@ -74,6 +75,8 @@ class Solitaire:
                 
                 break
         
+        self._selected_card.groups()[0].move_to_front(self._selected_card)
+
         self.update_card_position(self._selected_card)
 
         self._selected_card = None
@@ -198,6 +201,7 @@ class Solitaire:
 
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
+            
 
     def draw_elements(self, screen):
         self.placeholder_group.draw(screen)
