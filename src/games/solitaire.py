@@ -203,13 +203,16 @@ class Solitaire:
             pygame.sprite.LayeredUpdates(self.logic.stockpile),
             pygame.sprite.LayeredUpdates(self.logic.talon_pile),
         ] + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau] \
-          + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.tableau]
+          + [pygame.sprite.LayeredUpdates(pile) for pile in self.logic.foundation_piles]
         
         self.placeholder_group = pygame.sprite.LayeredUpdates([Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png'))) for i in range(4)])
 
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
-            
+
+    def group_from_pile(self, pile):
+        if pile is self.logic.stockpile: return self.groups[0]
+        elif pile is self.logic.talon_pile: return self.groups[1]
 
     def draw_elements(self, screen):
         self.placeholder_group.draw(screen)
@@ -245,6 +248,9 @@ class SolitaireGameLogic:
         for card in self.stockpile:
             card.front_shown = False
     
+    def get_all_piles(self):
+        return [self.stockpile, self.talon_pile] + self.tableau + self.foundation_piles
+
     #returns piles that has card
     def pile_from_card(self, target_card):
         all_piles = [self.stockpile, self.talon_pile] + self.tableau + self.foundation_piles
