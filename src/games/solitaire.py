@@ -82,12 +82,15 @@ class Solitaire:
 
                     if self._selected_pile in self.logic.tableau:
                         self.logic.swap_tableau_to_foundation(self._selected_pile, target_pile)
+                    elif self._selected_pile is self.logic.talon_pile:
+                        self.logic.swap_talon_to_foundation(self, target_pile)
                 
                 break
         
         if self._selected_card: 
-            self._selected_card.kill
-            self.group_from_pile(target_pile).add(self._selected_card)
+            if target_pile:
+                self._selected_card.kill
+                self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
 
         self._selected_card = None
