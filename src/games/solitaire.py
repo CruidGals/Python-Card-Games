@@ -47,12 +47,15 @@ class Solitaire:
     # Should only be called on mouse release
     def release_card(self, pos):
         if self._selected_pile == None: return
+
+        target_pile = None
         
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
 
                 if self._selected_card == None: #Semi-guard clause
                     if self._selected_pile is self.logic.stockpile: # if the pile is stockpile
+                        target_pile = self.logic.talon_pile
                         self.logic.swap_stockpile_to_talon()
 
                         if len(self.logic.talon_pile) != 0: 
@@ -65,25 +68,26 @@ class Solitaire:
                 if self._selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
                     pass #TODO Make automatic card player
                 elif collision_rect in self._tableau_pile_collision_rects:
-                    tableau_pile = self.pile_from_collision_rect(collision_rect)
+                    target_pile = self.pile_from_collision_rect(collision_rect)
 
                     if self._selected_pile is self.logic.talon_pile:
-                        self.logic.swap_talon_to_tableau(tableau_pile)
+                        self.logic.swap_talon_to_tableau(target_pile)
                     elif self._selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_tableau(self._selected_pile, tableau_pile, -1)
+                        self.logic.swap_tableau_to_tableau(self._selected_pile, target_pile, -1)
                     elif self._selected_pile in self.logic.foundation_piles:
-                        self.logic.swap_foundation_to_tableau(self._selected_pile, tableau_pile)
+                        self.logic.swap_foundation_to_tableau(self._selected_pile, target_pile)
                 
                 elif collision_rect in self._foundation_pile_collision_rects:
-                    foundation_pile = self.pile_from_collision_rect(collision_rect)
+                    target_pile = self.pile_from_collision_rect(collision_rect)
 
                     if self._selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_foundation(self._selected_pile, foundation_pile)
+                        self.logic.swap_tableau_to_foundation(self._selected_pile, target_pile)
                 
                 break
         
         if self._selected_card: 
-            self._selected_card.groups()[0].move_to_front(self._selected_card)
+            self._selected_card.kill
+            self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
 
         self._selected_card = None
@@ -209,10 +213,10 @@ class Solitaire:
 
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
-
+    
+    # The function form get_all_piles() have the same indexing as the groups
     def group_from_pile(self, pile):
-        if pile is self.logic.stockpile: return self.groups[0]
-        elif pile is self.logic.talon_pile: return self.groups[1]
+        return self.groups[self.logic.get_all_piles().index(pile)]
 
     def draw_elements(self, screen):
         self.placeholder_group.draw(screen)
