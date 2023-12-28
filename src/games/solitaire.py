@@ -198,7 +198,7 @@ class Solitaire:
 
             for card in pile:
                 card.update_rect(pos)
-                pos[1] += card.front_image.get_size()[1] / 4
+                pos[1] += self.logic.deck.card_size / 4
             pos = [pos[0] + self.logic.deck.card_size, pos[1] - (len(pile) * (self.logic.deck.card_size / 4))]
         
         pos[0] -= 7 * self.logic.deck.card_size
