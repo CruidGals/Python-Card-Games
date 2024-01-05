@@ -30,7 +30,6 @@ class Solitaire:
             if card.rect.collidepoint(pos):
                 if card.front_shown: 
                     self._selected_card = card
-                    print(card.groups())
                 break
         
         for collision_rect in self.all_collision_rects():
@@ -91,7 +90,7 @@ class Solitaire:
                 break
         
         if self._selected_card: 
-            if target_pile:
+            if target_pile and target_pile != self._selected_pile:
                 self._selected_card.kill()
                 self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
@@ -170,11 +169,11 @@ class Solitaire:
 
     def _update_stockpile_cards_pos(self, pos):
         for card in self.logic.stockpile:
-            card.update_rect(pos)
+            card.update_rect(pos[:])
     
     def _update_talon_pile_cards_pos(self, pos):
         for card in self.logic.talon_pile:
-            card.update_rect(pos)
+            card.update_rect(pos[:])
     
     def _update_placeholder_card_pos(self, pos):
         for card in self.placeholder_group.sprites():
@@ -189,9 +188,8 @@ class Solitaire:
                 continue
 
             for card in pile:
-                card.update_rect(pos)
+                card.update_rect(pos[:])
             pos[0] += self.logic.deck.card_size
-        pos[0] -= 4 * self.logic.deck.card_size #Resets the position
         
     def _update_tableau_pile_cards_pos(self, pos, target_piles):
         for pile in self.logic.tableau: #Update positions for cards in tableau piles
@@ -200,11 +198,9 @@ class Solitaire:
                 continue
 
             for card in pile:
-                card.update_rect(pos)
+                card.update_rect(pos[:])
                 pos[1] += self.logic.deck.card_size / 4
             pos = [pos[0] + self.logic.deck.card_size, pos[1] - (len(pile) * (self.logic.deck.card_size / 4))]
-        
-        pos[0] -= 7 * self.logic.deck.card_size
 
     #-----------------Drawing Functions-----------------#
 
