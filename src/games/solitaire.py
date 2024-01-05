@@ -30,6 +30,7 @@ class Solitaire:
             if card.rect.collidepoint(pos):
                 if card.front_shown: 
                     self._selected_card = card
+                    print(card.groups())
                 break
         
         for collision_rect in self.all_collision_rects():
@@ -61,6 +62,8 @@ class Solitaire:
                         if len(self.logic.talon_pile) != 0: 
                             self._selected_card = self.logic.talon_pile[-1]
                         else:
+                            self.group_from_pile(self.logic.talon_pile).empty()
+                            self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
                             self.update_pile_card_positions(self.logic.stockpile[0])
 
                     break
@@ -89,7 +92,7 @@ class Solitaire:
         
         if self._selected_card: 
             if target_pile:
-                self._selected_card.kill
+                self._selected_card.kill()
                 self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
 
