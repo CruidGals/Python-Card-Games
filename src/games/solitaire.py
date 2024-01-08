@@ -86,7 +86,7 @@ class Solitaire:
                     if self._selected_pile in self.logic.tableau:
                         self.logic.swap_tableau_to_foundation(self._selected_pile, target_pile)
                     elif self._selected_pile is self.logic.talon_pile:
-                        self.logic.swap_talon_to_foundation(self, target_pile)
+                        self.logic.swap_talon_to_foundation(target_pile)
                 
                 break
         
