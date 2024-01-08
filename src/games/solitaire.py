@@ -30,19 +30,21 @@ class Solitaire:
             if card.rect.collidepoint(pos):
                 if card.front_shown: 
                     self._selected_card = card
-                    self._selected_card.add(self._dragging_group)
                 break
         
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
                 self._selected_pile = self.pile_from_collision_rect(collision_rect)
+                if self._selected_card: self._dragging_group.add(self._selected_pile[self._selected_pile.index(self._selected_card):])
     
     # Should only be called on mouse held
     def move_card(self, pos):
         if self._selected_card == None: return
 
         delta = [pos[0] - self._previous_pos[0], pos[1] - self._previous_pos[1]] if self._previous_pos != None else [0,0]
-        self._selected_card.update_rect([self._selected_card.pos[0] + delta[0], self._selected_card.pos[1] + delta[1]])
+
+        for card in self._dragging_group.sprites():
+            card.update_rect([card.pos[0] + delta[0], card.pos[1] + delta[1]])
         self._previous_pos = pos[:]
     
     # Should only be called on mouse release
@@ -76,14 +78,14 @@ class Solitaire:
                     if self._selected_pile is self.logic.talon_pile:
                         self.logic.swap_talon_to_tableau(target_pile)
                     elif self._selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_tableau(self._selected_pile, target_pile, -1)
+                        self.logic.swap_tableau_to_tableau(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card))
                     elif self._selected_pile in self.logic.foundation_piles:
                         self.logic.swap_foundation_to_tableau(self._selected_pile, target_pile)
                 
                 elif collision_rect in self._foundation_pile_collision_rects:
                     target_pile = self.pile_from_collision_rect(collision_rect)
 
-                    if self._selected_pile in self.logic.tableau:
+                    if self._selected_pile in self.logic.tableau and len(self._dragging_group.sprites()) == 1:
                         self.logic.swap_tableau_to_foundation(self._selected_pile, target_pile)
                     elif self._selected_pile is self.logic.talon_pile:
                         self.logic.swap_talon_to_foundation(target_pile)
@@ -91,13 +93,12 @@ class Solitaire:
                 break
         
         if self._selected_card: 
-            if self._dragging_group in self._selected_card.groups():
-                self._selected_card.remove(self._dragging_group)
             if target_pile and target_pile != self._selected_pile and self._selected_card in target_pile:
                 self._selected_card.kill()
                 self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
 
+        self._dragging_group.empty()
         self._selected_card = None
         self._selected_pile = None
         self._previous_pos = None
