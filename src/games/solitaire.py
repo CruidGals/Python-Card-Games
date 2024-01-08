@@ -30,6 +30,7 @@ class Solitaire:
             if card.rect.collidepoint(pos):
                 if card.front_shown: 
                     self._selected_card = card
+                    self._selected_card.add(self._dragging_group)
                 break
         
         for collision_rect in self.all_collision_rects():
@@ -90,7 +91,9 @@ class Solitaire:
                 break
         
         if self._selected_card: 
-            if target_pile and target_pile != self._selected_pile:
+            if self._dragging_group in self._selected_card.groups():
+                self._selected_card.remove(self._dragging_group)
+            if target_pile and target_pile != self._selected_pile and self._selected_card in target_pile:
                 self._selected_card.kill()
                 self.group_from_pile(target_pile).add(self._selected_card)
             self.update_pile_card_positions(self._selected_card)
@@ -213,6 +216,8 @@ class Solitaire:
         
         self.placeholder_group = pygame.sprite.LayeredUpdates([Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png'))) for i in range(4)])
 
+        self._dragging_group = pygame.sprite.LayeredUpdates()
+
         for card in self.placeholder_group.sprites():
             card.resize_card(self.logic.deck.card_size)
     
@@ -223,6 +228,7 @@ class Solitaire:
     def draw_elements(self, screen):
         self.placeholder_group.draw(screen)
         for group in self.groups: group.draw(screen)
+        self._dragging_group.draw(screen)
 
 #Will include no pygame
 class SolitaireGameLogic:
