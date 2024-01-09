@@ -1,0 +1,4 @@
+    - MAKE THE LAYERED CARDS THING WORK
+        - the underlying problem is that the sprites arent being added to their correct layeredupdates group
+          when they move piles
+    - MAKE SURE THE TABLEAU SWITCHING IS FLUSH
