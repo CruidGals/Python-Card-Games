@@ -63,6 +63,7 @@ class Solitaire:
 
                         if len(self.logic.talon_pile) != 0: 
                             self._selected_card = self.logic.talon_pile[-1]
+                            self._selected_card.add(self._dragging_group)
                         else:
                             self.group_from_pile(self.logic.talon_pile).empty()
                             self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
@@ -94,8 +95,9 @@ class Solitaire:
         
         if self._selected_card: 
             if target_pile and target_pile != self._selected_pile and self._selected_card in target_pile:
-                self._selected_card.kill()
-                self.group_from_pile(target_pile).add(self._selected_card)
+                for card in self._dragging_group.sprites():
+                    card.kill()
+                    self.group_from_pile(target_pile).add(card)
             self.update_pile_card_positions(self._selected_card)
 
         self._dragging_group.empty()
