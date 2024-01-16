@@ -29,13 +29,13 @@ class Solitaire:
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
                 self._selected_pile = self.pile_from_collision_rect(collision_rect)
-        
-        for card in self._selected_pile[::-1]:
-            if card.rect.collidepoint(pos):
-                if card.front_shown: 
-                    self._selected_card = card
-                    self._dragging_group.add(self._selected_pile[self._selected_pile.index(self._selected_card):])
-                break
+                
+                for card in self._selected_pile[::-1]:
+                    if card.rect.collidepoint(pos):
+                        if card.front_shown: 
+                            self._selected_card = card
+                            self._dragging_group.add(self._selected_pile[self._selected_pile.index(self._selected_card):])
+                        break
     
     # Should only be called on mouse held
     def move_card(self, pos):
