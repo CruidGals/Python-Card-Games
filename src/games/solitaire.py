@@ -26,16 +26,16 @@ class Solitaire:
     
     # Should only be called on mouse clicked
     def select_card(self, pos):
-        for card in self.logic.deck.deck:
-            if card.rect.collidepoint(pos):
-                if card.front_shown: 
-                    self._selected_card = card
-                break
-        
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
                 self._selected_pile = self.pile_from_collision_rect(collision_rect)
-                if self._selected_card: self._dragging_group.add(self._selected_pile[self._selected_pile.index(self._selected_card):])
+        
+        for card in self._selected_pile[::-1]:
+            if card.rect.collidepoint(pos):
+                if card.front_shown: 
+                    self._selected_card = card
+                    self._dragging_group.add(self._selected_pile[self._selected_pile.index(self._selected_card):])
+                break
     
     # Should only be called on mouse held
     def move_card(self, pos):
@@ -205,8 +205,8 @@ class Solitaire:
 
             for card in pile:
                 card.update_rect(pos[:])
-                pos[1] += self.logic.deck.card_size / 4
-            pos = [pos[0] + self.logic.deck.card_size, pos[1] - (len(pile) * (self.logic.deck.card_size / 4))]
+                pos[1] += self.logic.deck.card_size / 5
+            pos = [pos[0] + self.logic.deck.card_size, pos[1] - (len(pile) * (self.logic.deck.card_size / 5))]
 
     #-----------------Drawing Functions-----------------#
 
