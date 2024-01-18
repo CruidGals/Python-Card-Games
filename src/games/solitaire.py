@@ -62,17 +62,18 @@ class Solitaire:
         if target_pile != None:
             if self._selected_card:
                 self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
-            elif target_pile is self.logic.stockpile:
-                self.logic.swap_stockpile_to_talon()
-                target_pile = self.logic.talon_pile
-                
-                if len(self.logic.talon_pile) != 0: 
-                    self._selected_card = self.logic.talon_pile[-1]
-                    self._selected_card.add(self._dragging_group) #Makes sure card is on top
-                else:
-                    self.group_from_pile(self.logic.talon_pile).empty()
-                    self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
-                    self.update_pile_card_positions(self.logic.stockpile[0])
+            elif target_pile == self._selected_pile:
+                if target_pile is self.logic.stockpile:
+                    self.logic.swap_stockpile_to_talon()
+                    target_pile = self.logic.talon_pile
+                    
+                    if len(self.logic.talon_pile) != 0: 
+                        self._selected_card = self.logic.talon_pile[-1]
+                        self._selected_card.add(self._dragging_group) #Makes sure card is on top
+                    else:
+                        self.group_from_pile(self.logic.talon_pile).empty()
+                        self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
+                        self.update_pile_card_positions(self.logic.stockpile[0])
 
         if self._selected_card: 
             if target_pile and target_pile != self._selected_pile and self._selected_card in target_pile:
@@ -263,20 +264,26 @@ class SolitaireGameLogic:
     def swap_piles_unknown_identity(self, pile1, pile2, tableau_index = -1, card_group = 1):
         if pile1 in self.tableau:
             if pile2 in self.tableau:
-                self.swap_tableau_to_tableau(pile1, pile2, tableau_index)
+                return self.swap_tableau_to_tableau(pile1, pile2, tableau_index)
             if pile2 in self.foundation_piles and card_group == 1:
-                self.swap_tableau_to_foundation(pile1, pile2)
+                return self.swap_tableau_to_foundation(pile1, pile2)
         elif pile1 in self.foundation_piles:
             if pile2 in self.tableau:
-                self.swap_foundation_to_tableau(pile1, pile2)
+                return self.swap_foundation_to_tableau(pile1, pile2)
         elif pile1 is self.stockpile:
             if pile2 is self.talon_pile:
-                self.swap_stockpile_to_talon()
+                return self.swap_stockpile_to_talon()
         elif pile1 is self.talon_pile:
             if pile2 in self.tableau:
-                self.swap_talon_to_tableau(pile2)
+                return self.swap_talon_to_tableau(pile2)
             if pile2 in self.foundation_piles:
-                self.swap_talon_to_foundation(pile2)
+                return self.swap_talon_to_foundation(pile2)
+
+    # Called when card is simply clicked instead of dragged. Goes through foundation piles then tableau piles
+    # Preconditions:
+    #   1.) Pile cannot be stockpile
+    def auto_swap_piles(self, pile, tableau_index = -1, card_group = 1):
+        pass
 
 
     # In solitaire, to shift from tableau piles you must satisfy these conditions:
@@ -287,10 +294,10 @@ class SolitaireGameLogic:
 
         #Start out with a bunch of guard clauses
         if len(new_pile) != 0:
-            if orig_pile[idx].is_same_color(new_pile[-1]): return
-            if orig_pile[idx].rank != new_pile[-1].rank - 1: return
+            if orig_pile[idx].is_same_color(new_pile[-1]): return False
+            if orig_pile[idx].rank != new_pile[-1].rank - 1: return False
         else: #When a tableau pile is empty, you can only put a king on it
-            if orig_pile[idx].rank != PlayingCard.KING: return
+            if orig_pile[idx].rank != PlayingCard.KING: return False
 
         new_pile.extend(orig_pile[idx:])
         del orig_pile[idx:]
@@ -299,12 +306,13 @@ class SolitaireGameLogic:
             self.points += 5
 
         self.move_count += 1
+        return True
 
     # Cards from stockpile fall into talon pile until there is no more cards
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
         if len(self.stockpile) == 0:
-            if len(self.talon_pile) == 0: return # Makes sure if no list out of bounds error if stockpile is exhausted
+            if len(self.talon_pile) == 0: return False# Makes sure if no list out of bounds error if stockpile is exhausted
             self.stockpile = self.talon_pile[::-1]
 
             for card in self.stockpile:
@@ -316,20 +324,21 @@ class SolitaireGameLogic:
             self.talon_pile[-1].front_shown = True
         
         self.move_count += 1
+        return True
 
     def swap_talon_to_tableau(self, tableau_pile: list):
-        if len(self.talon_pile) == 0: return
+        if len(self.talon_pile) == 0: return False
 
-        self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
         self.points += 5
+        return self.swap_tableau_to_tableau(self.talon_pile, tableau_pile, -1)
 
     # Foundation piles must "claim" a suit, and will have to be placed in increasing order
     def swap_tableau_to_foundation(self, tableau_pile: list, foundation_pile: list):
         if len(foundation_pile) != 0:
-            if tableau_pile[-1].suit != foundation_pile[-1].suit: return
-            if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return
+            if tableau_pile[-1].suit != foundation_pile[-1].suit: return False
+            if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return False
         else:
-            if tableau_pile[-1].rank != PlayingCard.ACE: return
+            if tableau_pile[-1].rank != PlayingCard.ACE: return False
 
         foundation_pile.append(tableau_pile.pop())
         if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
@@ -337,9 +346,10 @@ class SolitaireGameLogic:
             self.points += 10
 
         self.move_count += 1
+        return True
 
     def swap_talon_to_foundation(self, foundation_pile: list):
-        if len(self.talon_pile) != 0: self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
+        if len(self.talon_pile) != 0: return self.swap_tableau_to_foundation(self.talon_pile, foundation_pile)
 
     def swap_foundation_to_tableau(self, foundation_pile: list, tableau_pile: list):
-        self.swap_tableau_to_tableau(foundation_pile, tableau_pile, -1)
+        return self.swap_tableau_to_tableau(foundation_pile, tableau_pile, -1)
