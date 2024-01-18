@@ -53,18 +53,18 @@ class Solitaire:
 
         target_pile = None
         
+        #Pile detection
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
                 target_pile = self.pile_from_collision_rect(collision_rect)
-                if self._selected_card == None and self._selected_pile is self.logic.stockpile: # if the pile is stockpile
-                    target_pile = self.logic.talon_pile
                 break
     
         if target_pile != None:
             if self._selected_card:
                 self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
-            elif target_pile is self.logic.talon_pile:
+            elif target_pile is self.logic.stockpile:
                 self.logic.swap_stockpile_to_talon()
+                target_pile = self.logic.talon_pile
                 
                 if len(self.logic.talon_pile) != 0: 
                     self._selected_card = self.logic.talon_pile[-1]
