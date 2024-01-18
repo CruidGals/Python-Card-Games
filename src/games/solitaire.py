@@ -29,7 +29,7 @@ class Solitaire:
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
                 self._selected_pile = self.pile_from_collision_rect(collision_rect)
-                
+
                 for card in self._selected_pile[::-1]:
                     if card.rect.collidepoint(pos):
                         if card.front_shown: 
@@ -55,44 +55,25 @@ class Solitaire:
         
         for collision_rect in self.all_collision_rects():
             if collision_rect.collidepoint(pos):
-
-                if self._selected_card == None: #Semi-guard clause
-                    if self._selected_pile is self.logic.stockpile: # if the pile is stockpile
-                        target_pile = self.logic.talon_pile
-                        self.logic.swap_stockpile_to_talon()
-
-                        if len(self.logic.talon_pile) != 0: 
-                            self._selected_card = self.logic.talon_pile[-1]
-                            self._selected_card.add(self._dragging_group)
-                        else:
-                            self.group_from_pile(self.logic.talon_pile).empty()
-                            self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
-                            self.update_pile_card_positions(self.logic.stockpile[0])
-
-                    break
-
-                if self._selected_pile is self.pile_from_collision_rect(collision_rect): #If origin piles and released piles equal
-                    pass #TODO Make automatic card player
-                elif collision_rect in self._tableau_pile_collision_rects:
-                    target_pile = self.pile_from_collision_rect(collision_rect)
-
-                    if self._selected_pile is self.logic.talon_pile:
-                        self.logic.swap_talon_to_tableau(target_pile)
-                    elif self._selected_pile in self.logic.tableau:
-                        self.logic.swap_tableau_to_tableau(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card))
-                    elif self._selected_pile in self.logic.foundation_piles:
-                        self.logic.swap_foundation_to_tableau(self._selected_pile, target_pile)
-                
-                elif collision_rect in self._foundation_pile_collision_rects:
-                    target_pile = self.pile_from_collision_rect(collision_rect)
-
-                    if self._selected_pile in self.logic.tableau and len(self._dragging_group.sprites()) == 1:
-                        self.logic.swap_tableau_to_foundation(self._selected_pile, target_pile)
-                    elif self._selected_pile is self.logic.talon_pile:
-                        self.logic.swap_talon_to_foundation(target_pile)
-                
+                target_pile = self.pile_from_collision_rect(collision_rect)
+                if self._selected_card == None and self._selected_pile is self.logic.stockpile: # if the pile is stockpile
+                    target_pile = self.logic.talon_pile
                 break
-        
+    
+        if target_pile != None:
+            if self._selected_card:
+                self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
+            elif target_pile is self.logic.talon_pile:
+                self.logic.swap_stockpile_to_talon()
+                
+                if len(self.logic.talon_pile) != 0: 
+                    self._selected_card = self.logic.talon_pile[-1]
+                    self._selected_card.add(self._dragging_group) #Makes sure card is on top
+                else:
+                    self.group_from_pile(self.logic.talon_pile).empty()
+                    self.group_from_pile(self.logic.stockpile).add(self.logic.stockpile)
+                    self.update_pile_card_positions(self.logic.stockpile[0])
+
         if self._selected_card: 
             if target_pile and target_pile != self._selected_pile and self._selected_card in target_pile:
                 for card in self._dragging_group.sprites():
@@ -279,11 +260,11 @@ class SolitaireGameLogic:
     #---------------- Swapping Functions ----------------#
 
     #If has two piles of unknown identity, use this
-    def swap_piles_unknown_identity(self, pile1, pile2):
+    def swap_piles_unknown_identity(self, pile1, pile2, tableau_index = -1, card_group = 1):
         if pile1 in self.tableau:
             if pile2 in self.tableau:
-                self.swap_tableau_to_tableau(pile1, pile2)
-            if pile2 in self.foundation_piles:
+                self.swap_tableau_to_tableau(pile1, pile2, tableau_index)
+            if pile2 in self.foundation_piles and card_group == 1:
                 self.swap_tableau_to_foundation(pile1, pile2)
         elif pile1 in self.foundation_piles:
             if pile2 in self.tableau:
