@@ -61,9 +61,11 @@ class Solitaire:
     
         if target_pile != None:
             if self._selected_card:
-                self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
-            elif target_pile == self._selected_pile:
-                if target_pile is self.logic.stockpile:
+                if target_pile == self._selected_pile and target_pile != self.logic.stockpile:
+                    target_pile = self.logic.auto_swap_piles(self._selected_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
+                else:
+                    self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
+            elif target_pile is self.logic.stockpile:
                     self.logic.swap_stockpile_to_talon()
                     target_pile = self.logic.talon_pile
                     
@@ -149,10 +151,10 @@ class Solitaire:
         if pile is self.logic.talon_pile:
             self._update_talon_pile_cards_pos(pos)
         pos[0] += 2 * self.logic.deck.card_size
-        if pile in self.logic.foundation_piles:
+        if any(pile is p for p in self.logic.tableau):
             self._update_foundation_pile_cards_pos(pos, [pile])
         pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
-        if pile in self.logic.tableau:
+        if any(pile is p for p in self.logic.tableau):
             self._update_tableau_pile_cards_pos(pos, [pile])
 
     def _update_stockpile_cards_pos(self, pos):
@@ -262,28 +264,30 @@ class SolitaireGameLogic:
 
     #If has two piles of unknown identity, use this
     def swap_piles_unknown_identity(self, pile1, pile2, tableau_index = -1, card_group = 1):
-        if pile1 in self.tableau:
-            if pile2 in self.tableau:
+        if any(pile1 is p for p in self.tableau):
+            if any(pile2 is p for p in self.tableau):
                 return self.swap_tableau_to_tableau(pile1, pile2, tableau_index)
-            if pile2 in self.foundation_piles and card_group == 1:
+            if any(pile2 is p for p in self.foundation_piles) and card_group == 1:
                 return self.swap_tableau_to_foundation(pile1, pile2)
-        elif pile1 in self.foundation_piles:
-            if pile2 in self.tableau:
+        elif any(pile1 is p for p in self.foundation_piles):
+            if any(pile2 is p for p in self.tableau):
                 return self.swap_foundation_to_tableau(pile1, pile2)
         elif pile1 is self.stockpile:
             if pile2 is self.talon_pile:
                 return self.swap_stockpile_to_talon()
         elif pile1 is self.talon_pile:
-            if pile2 in self.tableau:
+            if any(pile2 is p for p in self.tableau):
                 return self.swap_talon_to_tableau(pile2)
-            if pile2 in self.foundation_piles:
+            if any(pile2 is p for p in self.foundation_piles):
                 return self.swap_talon_to_foundation(pile2)
 
     # Called when card is simply clicked instead of dragged. Goes through foundation piles then tableau piles
     # Preconditions:
     #   1.) Pile cannot be stockpile
     def auto_swap_piles(self, pile, tableau_index = -1, card_group = 1):
-        pass
+        for target_pile in self.foundation_piles + self.tableau:
+            if self.swap_piles_unknown_identity(pile, target_pile, tableau_index, card_group): return target_pile
+        return None
 
 
     # In solitaire, to shift from tableau piles you must satisfy these conditions:
@@ -337,8 +341,10 @@ class SolitaireGameLogic:
         if len(foundation_pile) != 0:
             if tableau_pile[-1].suit != foundation_pile[-1].suit: return False
             if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return False
+            print('bruh')
         else:
             if tableau_pile[-1].rank != PlayingCard.ACE: return False
+            print('yuh')
 
         foundation_pile.append(tableau_pile.pop())
         if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
