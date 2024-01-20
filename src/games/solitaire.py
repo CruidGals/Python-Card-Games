@@ -67,6 +67,7 @@ class Solitaire:
         if target_pile != None:
             if self._selected_card:
                 if target_pile == self._selected_pile and target_pile != self.logic.stockpile and not self._mouse_moved:
+                    print("bro")
                     target_pile = self.logic.auto_swap_piles(self._selected_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
                 else:
                     self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
@@ -94,6 +95,8 @@ class Solitaire:
         self._selected_pile = None
         self._previous_pos = None
         self._mouse_moved = False
+
+        if self.logic.is_game_won(): pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
@@ -157,7 +160,7 @@ class Solitaire:
         if pile is self.logic.talon_pile:
             self._update_talon_pile_cards_pos(pos)
         pos[0] += 2 * self.logic.deck.card_size
-        if any(pile is p for p in self.logic.tableau):
+        if any(pile is p for p in self.logic.foundation_piles):
             self._update_foundation_pile_cards_pos(pos, [pile])
         pos = [self._center[0] - 3.5 * self.logic.deck.card_size, self._center[1] - 1.25 * self.logic.deck.card_size]
         if any(pile is p for p in self.logic.tableau):
