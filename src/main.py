@@ -41,7 +41,7 @@ class Game:
 
 def main():
     pygame.init()
-    screen_size = (1300, 900)
+    screen_size = (900, 600)
 
     screen = pygame.display.set_mode(screen_size)
     clock = pygame.time.Clock()
