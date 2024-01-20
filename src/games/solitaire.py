@@ -23,6 +23,7 @@ class Solitaire:
         self._selected_card = None
         self._selected_pile = None
         self._previous_pos = None
+        self._mouse_moved = False
     
     # Should only be called on mouse clicked
     def select_card(self, pos):
@@ -41,7 +42,11 @@ class Solitaire:
     def move_card(self, pos):
         if self._selected_card == None: return
 
-        delta = [pos[0] - self._previous_pos[0], pos[1] - self._previous_pos[1]] if self._previous_pos != None else [0,0]
+        if self._previous_pos != None:
+            delta = [pos[0] - self._previous_pos[0], pos[1] - self._previous_pos[1]]
+            self._mouse_moved = True
+        else:
+            delta = [0,0]
 
         for card in self._dragging_group.sprites():
             card.update_rect([card.pos[0] + delta[0], card.pos[1] + delta[1]])
@@ -61,7 +66,7 @@ class Solitaire:
     
         if target_pile != None:
             if self._selected_card:
-                if target_pile == self._selected_pile and target_pile != self.logic.stockpile:
+                if target_pile == self._selected_pile and target_pile != self.logic.stockpile and not self._mouse_moved:
                     target_pile = self.logic.auto_swap_piles(self._selected_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
                 else:
                     self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
@@ -88,6 +93,7 @@ class Solitaire:
         self._selected_card = None
         self._selected_pile = None
         self._previous_pos = None
+        self._mouse_moved = False
 
     #-----------------Collision Functions-----------------#
     # Will help with accurate detection of tableau pile placement
