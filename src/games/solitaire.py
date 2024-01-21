@@ -67,7 +67,6 @@ class Solitaire:
         if target_pile != None:
             if self._selected_card:
                 if target_pile == self._selected_pile and target_pile != self.logic.stockpile and not self._mouse_moved:
-                    print("bro")
                     target_pile = self.logic.auto_swap_piles(self._selected_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
                 else:
                     self.logic.swap_piles_unknown_identity(self._selected_pile, target_pile, self._selected_pile.index(self._selected_card), len(self._dragging_group))
@@ -350,10 +349,8 @@ class SolitaireGameLogic:
         if len(foundation_pile) != 0:
             if tableau_pile[-1].suit != foundation_pile[-1].suit: return False
             if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return False
-            print('bruh')
         else:
             if tableau_pile[-1].rank != PlayingCard.ACE: return False
-            print('yuh')
 
         foundation_pile.append(tableau_pile.pop())
         if len(tableau_pile) != 0 and not tableau_pile[-1].front_shown:
