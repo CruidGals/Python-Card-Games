@@ -6,41 +6,55 @@ class Deck:
     def __init__(self) -> None:
         #Initialize all cards in one linese
         self.deck = np.array([PlayingCard(rank, suit) for suit in range(14,18) for rank in range(1,14)])
-        self.placeholder_card = Card(front_image=pygame.image.load(os.path.join('resources', 'cards', 'card_placeholder.png')))
 
         #The images are in square format, this is to generalize it
-        self.card_size = self.placeholder_card.front_image.get_size()[0]
+        self.card_size = self.deck[0].front_image.get_size()[0]
 
     def shuffle_deck(self):
         np.random.shuffle(self.deck)
 
     def resize_all_cards(self, size):
-        for card in self.deck:
-            card.resize_card(size)
-        self.placeholder_card.resize_card(size)
+        for card in self.deck: card.resize_card(size)
         self.card_size = size
 
-class Card():
+class Card(pygame.sprite.Sprite):
     def __init__(self, pos=(0,0), front_image=None, back_image=None) -> None:
+        pygame.sprite.Sprite.__init__(self)
+
         self.pos = pos
         self.front_image = front_image
         self.back_image = back_image
+        self._layer = 0
 
-        self.front_shown = True
+        self.front_shown = True # Will automatically set self.image to self.front_image as property
 
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if front_image else None
 
+    @property
+    def front_shown(self):
+        return self._front_shown
+    
+    @front_shown.setter
+    def front_shown(self, value: bool):
+        self._front_shown = value
+        self.update_image()
+    
     def resize_card(self, size):
         if self.front_image: self.front_image = pygame.transform.scale(self.front_image, (size, size))
         if self.back_image: self.back_image = pygame.transform.scale(self.back_image, (size, size))
 
-    def update_rect(self):
+        self.update_image()
+
+    def update_image(self):
+        if not self._front_shown and self.back_image:
+            self.image = self.back_image
+        else:
+            self.image = self.front_image
+
+    def update_rect(self, pos):
+        self.pos = pos
         self.rect = pygame.Rect(self.pos[0], self.pos[1], self.front_image.get_size()[0], self.front_image.get_size()[1]) if self.front_image else None
 
-    def draw_card(self, screen, pos):
-        screen.blit(self.front_image, pos) if self.front_shown else screen.blit(self.back_image, pos)
-        self.pos = pos
-        self.update_rect()
 
 class PlayingCard(Card):
 
