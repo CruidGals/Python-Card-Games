@@ -1,13 +1,14 @@
 import pygame
 import os
 from card import *
+from games.game import Game
 
 '''
 TODO Stub:
     - When picking a card, use the "in" operator to detect which pile it is in.
 '''
 
-class Solitaire:
+class Solitaire(Game):
     def __init__(self, screen_size) -> None:
         self.logic = SolitaireGameLogic()
 
