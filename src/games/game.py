@@ -10,3 +10,6 @@ class Game(ABC):
 
     @abstractmethod
     def release_card(self, pos): pass
+
+    @abstractmethod
+    def draw_elements(self, screen): pass
