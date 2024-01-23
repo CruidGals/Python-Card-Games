@@ -241,6 +241,8 @@ class SolitaireGameLogic:
         self.points = 0
         self.move_count = 0
 
+        self._previous_state = None
+
         self.deck.shuffle_deck()
         self.stockpile = self.deck.deck.tolist() #Do this so i can pop from the list
 
@@ -268,6 +270,19 @@ class SolitaireGameLogic:
 
     def is_game_won(self):
         return len(self.foundation_piles[0]) + len(self.foundation_piles[1]) + len(self.foundation_piles[2]) + len(self.foundation_piles[3]) == 52
+
+    #---------------- Undoing Functions ----------------#
+
+    def _save_previous_state(self):
+        self._previous_state = [self.stockpile, self.talon_pile, self.tableau, self.foundation_piles]
+
+    def _restore_previous_state(self):
+        self.stockpile = self._previous_state[0]
+        self.talon_pile = self._previous_state[1]
+        self.tableau = self._previous_state[2]
+        self.foundation_piles = self._previous_state[3]
+
+        self.move_count += 1
 
     #---------------- Swapping Functions ----------------#
 
@@ -304,6 +319,7 @@ class SolitaireGameLogic:
     #   2.) The cards you are shifting must be a number one lower than the card you are putting it on
     # Index exists if moving a group of cards (idx should be -1 if just moving one card)
     def swap_tableau_to_tableau(self, orig_pile: list, new_pile: list, idx):
+        self._save_previous_state()
 
         #Start out with a bunch of guard clauses
         if len(new_pile) != 0:
@@ -324,6 +340,8 @@ class SolitaireGameLogic:
     # Cards from stockpile fall into talon pile until there is no more cards
     # in stockpile, where which all the talon pile cards go back to stockpile.
     def swap_stockpile_to_talon(self):
+        self._save_previous_state()
+
         if len(self.stockpile) == 0:
             if len(self.talon_pile) == 0: return False# Makes sure if no list out of bounds error if stockpile is exhausted
             self.stockpile = self.talon_pile[::-1]
@@ -347,6 +365,8 @@ class SolitaireGameLogic:
 
     # Foundation piles must "claim" a suit, and will have to be placed in increasing order
     def swap_tableau_to_foundation(self, tableau_pile: list, foundation_pile: list):
+        self._save_previous_state()
+
         if len(foundation_pile) != 0:
             if tableau_pile[-1].suit != foundation_pile[-1].suit: return False
             if tableau_pile[-1].rank != foundation_pile[-1].rank + 1: return False
